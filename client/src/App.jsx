@@ -10,44 +10,54 @@ import Footer from './components/Footer';
 import LoadingScreen from './components/LoadingScreen';
 import NotificationSystem from './components/NotificationSystem';
 import Particles from './components/Particles';
+import AdminPrank from './pages/AdminPrank';
+import NotFound from './pages/NotFound';
 
 function App() {
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    // Simulate loading time
     const timer = setTimeout(() => {
-      setLoading(false);
+      // setLoading(false);
       addNotification('Welcome to my portfolio! Ready to explore?', 'success');
-    }, 2500);
-    
+    }, 5000);
+
     return () => clearTimeout(timer);
   }, []);
+
 
   const addNotification = (message, type = 'info') => {
     const id = Date.now();
     setNotifications(prev => [...prev, { id, message, type }]);
-    
+
     // Auto remove notification after 5 seconds
     setTimeout(() => {
       setNotifications(prev => prev.filter(notification => notification.id !== id));
     }, 5000);
   };
 
-  if (loading) return <LoadingScreen />;
+  // if (loading) return <LoadingScreen onComplete={() => {
+  //   setLoading(false);
+  //   // addNotification('Welcome to my portfolio! Ready to explore?', 'success');
+  // }} />;
+
 
   return (
     <Router>
       <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
         <Particles />
         <Navbar addNotification={addNotification} />
+        {/* <AdminPrank/> */}
         <div className="container mx-auto px-4 pt-20 pb-16">
           <Routes>
             <Route path="/" element={<Home addNotification={addNotification} />} />
             <Route path="/projects" element={<Projects addNotification={addNotification} />} />
             <Route path="/skills" element={<Skills addNotification={addNotification} />} />
             <Route path="/contact" element={<Contact addNotification={addNotification} />} />
+            <Route path="/admin" element={<AdminPrank addNotification={addNotification} />} />
+            {/* Catch-all 404 route (MUST be last) */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
         <NotificationSystem notifications={notifications} />

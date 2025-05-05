@@ -12,7 +12,7 @@ const Home = ({ addNotification }) => {
     }, 1000);
     
     return () => clearTimeout(timer);
-  }, [addNotification]);
+  }, []);
   
   return (
     <div className="space-y-12">
@@ -23,7 +23,7 @@ const Home = ({ addNotification }) => {
             <h1 className="text-4xl md:text-6xl font-bold">
               <span className="text-gray-300">Hello, I'm </span>
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
-                John Doe
+                Harshith S Kudapali
               </span>
             </h1>
             <h2 className="text-2xl md:text-3xl text-gray-300 font-light">
@@ -61,9 +61,9 @@ const Home = ({ addNotification }) => {
             <div className="w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 relative">
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 blur-lg opacity-30 animate-pulse"></div>
               <img 
-                src="/api/placeholder/600/600" 
+                src="/profilePic.png" 
                 alt="Profile" 
-                className="rounded-full border-4 border-blue-500/20 w-full h-full object-cover relative z-10"
+                className="rounded-full  border-blue-500/20 ml-16 h-full object-cover relative z-10"
               />
               <div className="absolute top-0 left-0 right-0 bottom-0 border-4 border-dashed border-blue-400/30 rounded-full animate-spin-slow z-0"></div>
             </div>
@@ -78,8 +78,8 @@ const Home = ({ addNotification }) => {
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <GitHubCalendar username="github-username" />
-          <LeetCodeStats username="leetcode-username" />
+          <GitHubCalendar username="harshith-kudapali" />
+          <LeetCodeStats username="harshy03" />
         </div>
       </section>
       

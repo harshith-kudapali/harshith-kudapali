@@ -4,18 +4,30 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@lottiefiles/react-lottie-player": "^3.6.0",
     "@tailwindcss/vite": "^4.1.5",
+    "file-saver": "^2.0.5",
     "framer-motion": "^12.9.4",
+    "howler": "^2.2.4",
+    "lodash": "^4.17.21",
+    "lucide-react": "^0.507.0",
     "react": "^19.0.0",
+    "react-confetti": "^6.4.0",
     "react-dom": "^19.0.0",
+    "react-lottie-player": "^2.1.0",
     "react-router-dom": "^7.5.3",
-    "tailwindcss": "^4.1.5"
+    "react-simple-typewriter": "^5.0.1",
+    "react-typing-effect": "^2.0.5",
+    "tailwindcss": "^4.1.5",
+    "use-sound": "^5.0.0",
+    "xterm": "^5.3.0",
+    "xterm-addon-fit": "^0.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",

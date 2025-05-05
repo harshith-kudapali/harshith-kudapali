@@ -1,0 +1,12 @@
+{
+  "name": "harshith-kudapali",
+  "version": "1.0.0",
+  "description": "A self portfolio website",
+  "license": "ISC",
+  "author": "Harshith sk",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
