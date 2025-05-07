@@ -12,7 +12,9 @@ import NotificationSystem from './components/NotificationSystem';
 import Particles from './components/Particles';
 import AdminPrank from './pages/AdminPrank';
 import NotFound from './pages/NotFound';
-
+import ResumePage from './pages/ResumePage';
+import BlogPage from './pages/BlogPage';
+import AboutMePage from './pages/AboutMePage';
 function App() {
   const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
@@ -46,7 +48,6 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
-        <Particles />
         <Navbar addNotification={addNotification} />
         {/* <AdminPrank/> */}
         <div className="container mx-auto px-4 pt-20 pb-16">
@@ -56,10 +57,14 @@ function App() {
             <Route path="/skills" element={<Skills addNotification={addNotification} />} />
             <Route path="/contact" element={<Contact addNotification={addNotification} />} />
             <Route path="/admin" element={<AdminPrank addNotification={addNotification} />} />
+            <Route path="/resume" element={<ResumePage addNotification={addNotification} />} />
+            <Route path="/blog" element={<BlogPage addNotification={addNotification} />} />
+            <Route path="/about" element={<AboutMePage addNotification={addNotification} />} />
             {/* Catch-all 404 route (MUST be last) */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
+        <Particles />
         <NotificationSystem notifications={notifications} />
         <Footer />
       </div>
