@@ -39,10 +39,10 @@ function App() {
     }, 5000);
   };
 
-  // if (loading) return <LoadingScreen onComplete={() => {
-  //   setLoading(false);
-  //   // addNotification('Welcome to my portfolio! Ready to explore?', 'success');
-  // }} />;
+  if (loading) return <LoadingScreen onComplete={() => {
+    setLoading(false);
+    // addNotification('Welcome to my portfolio! Ready to explore?', 'success');
+  }} />;
 
 
   return (

@@ -46,7 +46,7 @@ export default function AboutMe() {
     };
 
     return (
-        <div className="min-h-screen z-20 bg-amber-50">
+        <div className="min-h-screen  bg-amber-50">
             {/* Decorative Header with Enhanced Rangoli-inspired Pattern */}
             <div className="relative h-64 overflow-hidden bg-gradient-to-r from-orange-500 via-red-500 to-pink-500">
                 <div className="absolute inset-0 opacity-20">
