@@ -1,4 +1,5 @@
 // src/App.jsx
+export const backendApi = import.meta.env.VITE_BACKEND_API;
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -16,7 +17,7 @@ import ResumePage from './pages/ResumePage';
 import BlogPage from './pages/BlogPage';
 import AboutMePage from './pages/AboutMePage';
 function App() {
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -38,11 +39,26 @@ function App() {
       setNotifications(prev => prev.filter(notification => notification.id !== id));
     }, 5000);
   };
+const [loading, setLoading] = useState(() => {
+  const hasVisited = localStorage.getItem('hasVisited');
+  return !hasVisited;
+});
+if (loading) {
+  return (
+    <LoadingScreen
+      onComplete={() => {
+        localStorage.setItem('hasVisited', 'true'); // Mark as visited
+        setLoading(false);
+        // addNotification('Welcome to my portfolio! Ready to explore?', 'success');
+      }}
+    />
+  );
+}
 
-  if (loading) return <LoadingScreen onComplete={() => {
-    setLoading(false);
-    // addNotification('Welcome to my portfolio! Ready to explore?', 'success');
-  }} />;
+  // if (loading) return <LoadingScreen onComplete={() => {
+  //   setLoading(false);
+  //   // addNotification('Welcome to my portfolio! Ready to explore?', 'success');
+  // }} />;
 
 
   return (

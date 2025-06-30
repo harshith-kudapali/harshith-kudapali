@@ -8,6 +8,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev":"cd client && npm run dev"
+    "dev": "concurrently \"cd client && npm run dev\" \"cd server && nodemon run dev\""
+  },
+  "dependencies": {
+    "concurrently": "^9.2.0"
   }
 }
