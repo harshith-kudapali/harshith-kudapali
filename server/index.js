@@ -6,7 +6,7 @@ const app = express();
 app.use(morgan('dev'))
 // Enable CORS for all origins (or specify the one you need)
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://harshith-kudapali-35xj.vercel.app/',
   credentials: true // if using cookies
 }));
 
