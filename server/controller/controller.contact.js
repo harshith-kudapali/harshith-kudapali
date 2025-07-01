@@ -1,14 +1,21 @@
+import dotenv from 'dotenv';
+
 export const sendEmail = async (req, res) => {
     const { name, email, subject, message } = req.body;
 
-    const telegramBotToken = '7818246019:AAF5A3yvasYFnDkeUqf3Z-mZcNBcGMR-rWw'; // replace with your bot token
-    const chatId = '5611468912'; // replace with your Telegram chat ID
+    dotenv.config();
 
-    const text = `<b>New Contact Form Submission:</b>
+    const telegramBotToken = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+    const text = `
+    <b>New Contact Form Submission:</b>
 
 <b>Name:</b> ${name}
+
 <b>Email:</b> ${email}
+
 <b>Subject:</b> ${subject}
+
 <b>Message:</b> ${message}`;
 
     try {

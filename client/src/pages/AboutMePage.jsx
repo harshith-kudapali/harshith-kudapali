@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function AboutMe() {
     const [activeSection, setActiveSection] = useState('intro');
@@ -33,7 +33,47 @@ export default function AboutMe() {
         { type: "Film", title: "Pather Panchali", creator: "Satyajit Ray", thoughts: "Captures the essence of rural Indian life so beautifully" },
         { type: "Music", title: "Raag Yaman", creator: "Pandit Hariprasad Chaurasia", thoughts: "The flute sounds like monsoon rain on our tin roof" }
     ];
-
+    const karnatakaTimeline = [
+        {
+            month: "January",
+            festival: "Makar Sankranti",
+            description: "Known as Ellu Bella in Karnataka, celebrated with sesame seeds and jaggery exchanges. Kite flying is popular, especially in North Karnataka."
+        },
+        {
+            month: "February-March",
+            festival: "Shivaratri",
+            description: "Major celebration at temples across Karnataka, especially at Gokarna and other Shiva temples. Night-long prayers and cultural programs."
+        },
+        {
+            month: "March-April",
+            festival: "Ugadi",
+            description: "Kannada New Year celebrated with traditional Bevu Bella (neem and jaggery) symbolizing life's bitter-sweet experiences. Houses decorated with mango leaves."
+        },
+        {
+            month: "August-September",
+            festival: "Gowri Ganesha",
+            description: "Karnataka's biggest festival with elaborate pandals in Bengaluru and across the state. Clay Ganesha idols are worshipped for 11 days."
+        },
+        {
+            month: "September-October",
+            festival: "Navaratri Dasara",
+            description: "Grand celebrations in Mysuru with the famous Mysore Dasara procession, Chamundeshwari temple festivities, and cultural programs at Mysore Palace."
+        },
+        {
+            month: "October-November",
+            festival: "Deepavali",
+            description: "Festival of lights celebrated with oil lamps, rangoli, and traditional sweets like Mysore Pak and Dharwad Peda."
+        },
+        {
+            month: "November",
+            festival: "Kannada Rajyotsava",
+            description: "Karnataka Formation Day celebrated on November 1st with cultural programs, flag hoisting, and promotion of Kannada language and culture."
+        },
+        {
+            month: "December-January",
+            festival: "Hampi Festival",
+            description: "Annual cultural extravaganza at the UNESCO World Heritage site showcasing Karnataka's rich history through dance, music, and cultural performances."
+        }];
     // Helper Functions
     const openGalleryModal = (image) => {
         setSelectedGalleryImage(image);
@@ -44,37 +84,77 @@ export default function AboutMe() {
         setIsGalleryOpen(false);
         setSelectedGalleryImage(null);
     };
+    const [currentlang, setlang] = useState(0);
+    const [isVisible, setIsVisible] = useState(false);
+    const lang = [
+        "Hello and welcome!",
+        "नमस्ते और स्वागत है!",
+        "ನಮಸ್ಕಾರ ಮತ್ತು ಸ್ವಾಗತ!",
+        "नमः स्वागतं च!"
+    ];
 
+    useEffect(() => {
+        setIsVisible(true);
+        const interval = setInterval(() => {
+            setlang((prev) => (prev + 1) % lang.length);
+        }, 2000);
+        return () => clearInterval(interval);
+    }, []);
     return (
-        <div className="min-h-screen  bg-amber-50">
+        <div className="min-h-screen ">
             {/* Decorative Header with Enhanced Rangoli-inspired Pattern */}
-            <div className="relative h-64 overflow-hidden bg-gradient-to-r from-orange-500 via-red-500 to-pink-500">
-                <div className="absolute inset-0 opacity-20">
-                    <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="400" cy="400" r="300" fill="none" stroke="white" strokeWidth="5" />
-                        <circle cx="400" cy="400" r="250" fill="none" stroke="white" strokeWidth="5" />
-                        <circle cx="400" cy="400" r="200" fill="none" stroke="white" strokeWidth="5" />
-                        <circle cx="400" cy="400" r="150" fill="none" stroke="white" strokeWidth="5" />
-                        <path d="M400,100 L400,700 M100,400 L700,400 M228,228 L572,572 M228,572 L572,228" stroke="white" strokeWidth="5" />
+            <div className="relative h-[100px] overflow-hidden">
+                <div className="absolute inset-0 opacity-5 flex items-center justify-center">
+                    <svg viewBox="0 0 800 800" className="w-[600px] h-[600px]">
+                        <style>{`
+          .rotating-mandala {
+            animation: rotate 10s linear infinite;
+            transform-origin: 400px 400px;
+          }
+          @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
 
-                        {/* Enhanced pattern with paisley elements */}
-                        <g>
-                            {[0, 90, 180, 270].map((angle, i) => (
-                                <g key={i} transform={`rotate(${angle} 400 400)`}>
+                        <g className="rotating-mandala">
+                            <circle cx="400" cy="400" r="300" fill="none" stroke="white" strokeWidth="5" />
+                            <circle cx="400" cy="400" r="250" fill="none" stroke="white" strokeWidth="5" />
+                            <circle cx="400" cy="400" r="200" fill="none" stroke="white" strokeWidth="5" />
+                            <circle cx="400" cy="400" r="150" fill="none" stroke="white" strokeWidth="5" />
+                            <path d="M400,100 L400,700 M100,400 L700,400 M228,228 L572,572 M228,572 L572,228" stroke="white" strokeWidth="5" />
+
+                            <g>
+                                <g transform="rotate(0 400 400)">
                                     <path d="M480,250 Q510,200 480,150 Q450,180 480,210 Q500,190 480,250" fill="white" opacity="0.5" />
                                     <path d="M500,300 Q550,280 560,240 Q540,220 520,240 Q530,270 500,300" fill="white" opacity="0.5" />
                                 </g>
-                            ))}
-                        </g>
 
-                        <circle cx="400" cy="400" r="50" fill="white" />
-                        <circle cx="400" cy="400" r="30" fill="#FF6B6B" />
+                                <g transform="rotate(90 400 400)">
+                                    <path d="M480,250 Q510,200 480,150 Q450,180 480,210 Q500,190 480,250" fill="white" opacity="0.5" />
+                                    <path d="M500,300 Q550,280 560,240 Q540,220 520,240 Q530,270 500,300" fill="white" opacity="0.5" />
+                                </g>
+
+                                <g transform="rotate(180 400 400)">
+                                    <path d="M480,250 Q510,200 480,150 Q450,180 480,210 Q500,190 480,250" fill="white" opacity="0.5" />
+                                    <path d="M500,300 Q550,280 560,240 Q540,220 520,240 Q530,270 500,300" fill="white" opacity="0.5" />
+                                </g>
+
+                                <g transform="rotate(270 400 400)">
+                                    <path d="M480,250 Q510,200 480,150 Q450,180 480,210 Q500,190 480,250" fill="white" opacity="0.5" />
+                                    <path d="M500,300 Q550,280 560,240 Q540,220 520,240 Q530,270 500,300" fill="white" opacity="0.5" />
+                                </g>
+                            </g>
+
+                            {/* <circle cx="400" cy="400" r="50" fill="white" /> */}
+                            {/* <circle cx="400" cy="400" r="30" fill="#FF6B6B" /> */}
+                        </g>
                     </svg>
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
                         <h1 className="text-4xl font-bold text-white">Harshith S Kudapali</h1>
-                        <p className="mt-2 text-xl text-white">नमस्ते, मेरा स्वागत है</p>
+                        <p className="mt-2 text-xl text-white">{lang[currentlang]}</p>
                         <p className="mt-1 text-sm text-white">Hindi • Kannada • English • Sanskrit</p>
                     </div>
                 </div>
@@ -84,14 +164,14 @@ export default function AboutMe() {
             <div className="max-w-4xl mx-auto px-4 py-8">
                 {/* Navigation inspired by temple arches */}
                 <div className="flex justify-center mb-8">
-                    <div className="flex flex-wrap justify-center space-x-2 p-2 rounded-full bg-white shadow-md">
+                    <div className="flex flex-wrap h-15 justify-center space-x-2 p-2 rounded-full border border-white shadow-md">
                         {['intro', 'journey', 'culture', 'passions', 'literature', 'gallery', 'philosophy'].map((section) => (
                             <button
                                 key={section}
                                 onClick={() => setActiveSection(section)}
                                 className={`px-4 py-2 mb-2 rounded-full transition-colors duration-300 ${activeSection === section
-                                    ? 'bg-orange-500 text-white'
-                                    : 'hover:bg-orange-100 text-orange-800'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'hover:bg-blue-500/30 text-white'
                                     }`}
                             >
                                 {section.charAt(0).toUpperCase() + section.slice(1)}
@@ -101,49 +181,36 @@ export default function AboutMe() {
                 </div>
 
                 {/* Content Container with decorative border */}
-                <div className="bg-white rounded-lg shadow-lg p-8 border-2 border-orange-200" style={{
-                    backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFA07A' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
-                }}>
+                <div className=" rounded-lg shadow-lg "  >
                     {/* Intro Section */}
                     {activeSection === 'intro' && (
                         <div className="space-y-6">
                             <div className="flex flex-col md:flex-row items-center gap-8">
-                                <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-orange-500 shadow-lg flex-shrink-0">
-                                    <div className="w-full h-full bg-gradient-to-br from-orange-200 to-red-300 flex items-center justify-center">
-                                        <span className="text-6xl text-white">प्र</span>
+                                <div className="w-48 h-48 rounded-full overflow-hidden bg-gradient-to-r from-blue-400 to-purple-500 p-1 shadow-lg flex-shrink-0">
+                                    <div className="w-full h-full rounded-full overflow-hidden bg-gray-700 flex items-center justify-center">
+                                        <span className="text-6xl text-white">हर्ष</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <p className="text-lg text-gray-700 leading-relaxed">
-                                        Namaste! I'm Priya, born and raised in the vibrant city of Jaipur, Rajasthan - the Pink City of India. My life is a colorful tapestry woven with threads of ancient tradition and modern aspirations, much like the intricate patterns of a hand-dyed bandhani dupatta.
-                                    </p>
+                                    <p className="text-lg text-white leading-relaxed">
+                                        Namaskara! I’m Harshith, a developer, dreamer, and doer, proudly shaped by the energy of Karnataka. My journey is rooted in curiosity and built on code — a blend of logic and creativity. From late-night debugging sessions to brainstorming ideas that bring people together, I thrive at the intersection of innovation and impact. Like a perfectly optimized algorithm, my work is driven by clarity, purpose, and a passion for building tech that feels human.                                    </p>
                                 </div>
                             </div>
 
-                            <div className="p-6 bg-orange-50 rounded-lg border-l-4 border-orange-500">
-                                <p className="italic text-orange-800 font-medium">
-                                    "जहां हम से है वहीं से हम हैं" — Our roots define who we are, and I carry mine proudly wherever I go.
+                            <div className="p-6 bg-gray-700 rounded-lg border-l-4 border-purple-500">
+                                <p className="italic text-white font-medium leading-relaxed text-lg">
+                                    कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।<br />
+                                    मा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥<br /><br />
+                                    Karmaṇy-evādhikāras te mā phaleṣu kadācana;<br />
+                                    mā karma-phala-hetur bhūr mā te saṅgo ’stvakarmaṇi. (BG 2.47)<br /><br />
+                                    “You have a right to perform your duty—never to the fruits thereof.”
                                 </p>
+
                             </div>
 
-                            <p className="text-gray-700">
-                                Like the dancing flames of a Diwali diya, I aspire to bring light and warmth to every space I occupy. My heritage is my strength - from the spices that flavor my cooking to the values that guide my decisions, India flows through my veins and inspires my creative expression.
-                            </p>
+                            <p className="text-white">
+                                Like the steady flame of a Diwali diya, I aim to bring clarity and spark into everything I build — not through rituals, but through purpose. I’m not bound by tradition, but I carry its essence: focus, resilience, and authenticity. Whether I’m writing code, brainstorming ideas, or just living life, the spirit of where I come from shapes how I move forward. I don’t follow the old ways blindly — I remix them into something that fits today. India runs through my logic and creativity — not as a label, but as fuel.                            </p>
 
-                            {/* Added animated diyas */}
-                            <div className="flex justify-center py-4">
-                                <div className="flex space-x-8">
-                                    {[1, 2, 3].map((diya) => (
-                                        <div key={diya} className="relative">
-                                            <div className="w-12 h-4 bg-orange-700 rounded-full"></div>
-                                            <div className="w-8 h-8 mx-auto -mt-1">
-                                                <div className="absolute w-4 h-8 bg-yellow-500 rounded-full mx-auto left-4 animate-pulse opacity-90"></div>
-                                                <div className="absolute w-2 h-6 bg-orange-400 rounded-full mx-auto left-5 animate-pulse opacity-80"></div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
                         </div>
                     )}
 
@@ -151,32 +218,32 @@ export default function AboutMe() {
                     {activeSection === 'journey' && (
                         <div className="space-y-6">
                             <div className="flex items-center justify-center mb-6">
-                                <div className="h-px bg-orange-200 flex-grow"></div>
-                                <span className="px-4 text-xl font-semibold text-orange-800">My Yatra</span>
-                                <div className="h-px bg-orange-200 flex-grow"></div>
+                                <div className="h-px bg-purple-500 flex-grow"></div>
+                                <span className="px-4 text-xl font-semibold text-white">My Yatra</span>
+                                <div className="h-px bg-purple-500 flex-grow"></div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="bg-orange-50 p-4 rounded-lg border-b-2 border-orange-300">
-                                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                                        <span className="text-orange-600 font-bold">1</span>
+                                <div className="bg-gray-700 p-4 rounded-lg border-b-2 border-blue-600">
+                                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+                                        <span className="text-blue-700 font-bold">1</span>
                                     </div>
-                                    <h3 className="font-bold text-orange-800 mb-2">Childhood in Jaipur</h3>
-                                    <p className="text-gray-700">Growing up surrounded by palaces and folk art, learning classical Kathak dance, and listening to my grandmother's stories from the Ramayana.</p>
+                                    <h3 className="font-bold text-blue-500 mb-2">Childhood in Davanagere</h3>
+                                    <p className="text-white">Growing up surrounded by palaces and folk art, learning classical Kathak dance, and listening to my grandmother's stories from the Ramayana.</p>
                                 </div>
-                                <div className="bg-orange-50 p-4 rounded-lg border-b-2 border-orange-300">
-                                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                                        <span className="text-orange-600 font-bold">2</span>
+                                <div className="bg-gray-700 p-4 rounded-lg border-b-2 border-blue-700">
+                                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+                                        <span className="text-blue-700 font-bold">2</span>
                                     </div>
-                                    <h3 className="font-bold text-orange-800 mb-2">Education & Growth</h3>
-                                    <p className="text-gray-700">Studying both ancient Sanskrit texts and modern design, finding harmony between tradition and innovation in my creative pursuits.</p>
+                                    <h3 className="font-bold text-blue-500 mb-2">Education & Growth</h3>
+                                    <p className="text-white">Studying both ancient Sanskrit texts and modern design, finding harmony between tradition and innovation in my creative pursuits.</p>
                                 </div>
-                                <div className="bg-orange-50 p-4 rounded-lg border-b-2 border-orange-300">
-                                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
-                                        <span className="text-orange-600 font-bold">3</span>
+                                <div className="bg-gray-700 p-4 rounded-lg border-b-2 border-blue-700">
+                                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4">
+                                        <span className="text-blue-700 font-bold">3</span>
                                     </div>
-                                    <h3 className="font-bold text-orange-800 mb-2">Present Endeavors</h3>
-                                    <p className="text-gray-700">Creating digital art inspired by Indian miniature paintings, practicing yoga daily, and building bridges between cultures through storytelling.</p>
+                                    <h3 className="font-bold text-blue-500 mb-2">Present Endeavors</h3>
+                                    <p className="text-white">Creating digital art inspired by Indian miniature paintings, practicing yoga daily, and building bridges between cultures through storytelling.</p>
                                 </div>
                             </div>
                         </div>
@@ -185,125 +252,162 @@ export default function AboutMe() {
                     {/* NEW: Cultural Timeline Section */}
                     {activeSection === 'culture' && (
                         <div className="space-y-8">
-                            <h2 className="text-2xl font-bold text-center text-orange-800 mb-4">Cultural Calendar</h2>
-                            <p className="text-center text-gray-700 mb-6">The rhythm of my year follows these cherished celebrations</p>
+                            <h2 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 mb-4">Cultural Calendar</h2>
+                            <p className="text-center text-white mb-6">The rhythm of my year follows these cherished celebrations</p>
 
                             {/* Festival Timeline */}
-                            <div className="relative">
-                                {/* Timeline line */}
-                                <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-orange-200"></div>
+                            <div className="max-w-4xl mx-auto p-6 ">
 
-                                <div className="space-y-12">
-                                    {culturalTimeline.map((event, index) => (
-                                        <div key={index} className={`flex ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
-                                            <div className="w-1/2 pr-8 text-right">
-                                                {index % 2 === 0 ? (
-                                                    <>
-                                                        <h3 className="font-bold text-orange-800">{event.month}</h3>
-                                                        <h4 className="font-medium text-orange-600">{event.festival}</h4>
-                                                    </>
-                                                ) : (
-                                                    <p className="text-gray-700">{event.description}</p>
-                                                )}
-                                            </div>
+                                <div className="relative">
+                                    {/* Timeline line */}
+                                    <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-gradient-to-b from-blue-500 via-pink-500 to-purple-500 "></div>
 
-                                            <div className="absolute left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full bg-orange-500 border-4 border-white shadow z-10 flex items-center justify-center">
-                                                {/* Festival symbols */}
-                                                {index === 0 && <span>🪁</span>}
-                                                {index === 1 && <span>🎨</span>}
-                                                {index === 2 && <span>🌙</span>}
-                                                {index === 3 && <span>🪔</span>}
-                                                {index === 4 && <span>🐪</span>}
-                                            </div>
+                                    <div className="space-y-12">
+                                        {karnatakaTimeline.map((event, index) => (
+                                            <div key={index} className={`flex ${index % 2 === 0 ? 'flex-row' : 'flex-row-reverse'}`}>
+                                                <div className="w-1/2 pr-8 text-right">
+                                                    {index % 2 === 0 ? (
+                                                        <>
+                                                            <h3 className="font-bold text-blue-500 text-lg">{event.month}</h3>
+                                                            <h4 className="font-medium text-purple-500 text-base mb-2">{event.festival}</h4>
+                                                        </>
+                                                    ) : (
+                                                        <p className="text-white text-sm leading-relaxed pl-6">{event.description}</p>
+                                                    )}
+                                                </div>
 
-                                            <div className="w-1/2 pl-8">
-                                                {index % 2 !== 0 ? (
-                                                    <>
-                                                        <h3 className="font-bold text-orange-800">{event.month}</h3>
-                                                        <h4 className="font-medium text-orange-600">{event.festival}</h4>
-                                                    </>
-                                                ) : (
-                                                    <p className="text-gray-700">{event.description}</p>
-                                                )}
+                                                <div className="absolute left-1/2 transform -translate-x-1/2 w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 border-4 border-white shadow-lg z-10 flex items-center justify-center text-lg">
+                                                    {/* Karnataka-specific festival symbols */}
+                                                    {index === 0 && <span>🪁</span>} {/* Makar Sankranti - Kites */}
+                                                    {index === 1 && <span>🔱</span>} {/* Shivaratri - Trishul */}
+                                                    {index === 2 && <span>🌿</span>} {/* Ugadi - Neem leaves */}
+                                                    {index === 3 && <span>🐘</span>} {/* Ganesha */}
+                                                    {index === 4 && <span>👑</span>} {/* Dasara - Mysore royalty */}
+                                                    {index === 5 && <span>🪔</span>} {/* Deepavali - Diyas */}
+                                                    {index === 6 && <span>🚩</span>} {/* Rajyotsava - Flag */}
+                                                    {index === 7 && <span>🏛️</span>} {/* Hampi - Heritage */}
+                                                </div>
+
+                                                <div className="w-1/2 pl-8">
+                                                    {index % 2 !== 0 ? (
+                                                        <>
+                                                            <h3 className="font-bold text-blue-500 text-lg">{event.month}</h3>
+                                                            <h4 className="font-medium text-purple-500 text-base mb-2">{event.festival}</h4>
+                                                        </>
+                                                    ) : (
+                                                        <p className="text-white text-sm leading-relaxed">{event.description}</p>
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 text-center">
+                                    <p className="text-sm text-white italic">
+                                        "ಸರ್ವಜನ ಸುಖಿನೋ ಭವಂತು" - May all people be happy
+                                    </p>
                                 </div>
                             </div>
 
                             {/* Regional Traditions */}
-                            <div className="mt-12 p-6 bg-orange-50 rounded-lg">
-                                <h3 className="text-xl font-semibold text-orange-800 mb-4">Rajasthani Traditions I Preserve</h3>
+
+                            <div className="mt-12 p-6 bg-transparent rounded-lg">
+                                <h3 className="text-xl font-semibold text-purple-800 mb-4">Karnataka Heritage Around Me</h3>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="flex space-x-3">
-                                        <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                                            <span className="text-2xl">👗</span>
+                                        <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                            <span className="text-2xl">🧵</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-medium text-orange-700">Bandhej (Tie-Dye)</h4>
-                                            <p className="text-sm text-gray-600">I learned this traditional tie-dye technique from my mother and still create my own dupattas.</p>
+                                            <h4 className="font-medium text-blue-700">Mysore Silk Weaving</h4>
+                                            <p className="text-sm text-white">The beautiful Mysore silk sarees are still handwoven by skilled artisans in the silk city today.</p>
                                         </div>
                                     </div>
 
                                     <div className="flex space-x-3">
-                                        <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                                            <span className="text-2xl">🖌️</span>
+                                        <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                            <span className="text-2xl">🎨</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-medium text-orange-700">Blue Pottery</h4>
-                                            <p className="text-sm text-gray-600">A Persian art form brought to Jaipur - I attend workshops to keep this craft alive.</p>
+                                            <h4 className="font-medium text-purple-700">Mysore Painting</h4>
+                                            <p className="text-sm text-white">This classical South Indian painting style with intricate gold leaf work continues to flourish in local art studios.</p>
                                         </div>
                                     </div>
 
                                     <div className="flex space-x-3">
-                                        <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                                            <span className="text-2xl">🍲</span>
+                                        <div className="flex-shrink-0 w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
+                                            <span className="text-2xl">🥞</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-medium text-orange-700">Dal Baati Churma</h4>
-                                            <p className="text-sm text-gray-600">Our family recipe for this Rajasthani dish has been passed down for five generations.</p>
+                                            <h4 className="font-medium text-pink-700">Davanagere Benne Dosa</h4>
+                                            <p className="text-sm text-white">The legendary buttery dosa from Davanagere remains a beloved specialty across Karnataka and beyond.</p>
                                         </div>
                                     </div>
 
                                     <div className="flex space-x-3">
-                                        <div className="flex-shrink-0 w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                        <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
                                             <span className="text-2xl">🎭</span>
                                         </div>
                                         <div>
-                                            <h4 className="font-medium text-orange-700">Kathputli</h4>
-                                            <p className="text-sm text-gray-600">I volunteer teaching children the art of traditional Rajasthani puppetry.</p>
+                                            <h4 className="font-medium text-blue-700">Yakshagana</h4>
+                                            <p className="text-sm text-white">This vibrant traditional Karnataka folk theater with elaborate costumes continues to captivate audiences.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex space-x-3">
+                                        <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                            <span className="text-2xl">🏛️</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-medium text-purple-700">Channapatna Toys</h4>
+                                            <p className="text-sm text-white">These traditional wooden toys from the craft town near Mysore are still crafted by skilled artisans today.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex space-x-3">
+                                        <div className="flex-shrink-0 w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center">
+                                            <span className="text-2xl">☕</span>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-medium text-pink-700">Filter Coffee Tradition</h4>
+                                            <p className="text-sm text-white">The authentic South Indian filter coffee method remains an integral part of Karnataka's daily culture.</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+
                             {/* Family Recipe */}
-                            <div className="mt-8 border-2 border-dashed border-orange-300 p-6 rounded-lg">
-                                <h3 className="text-center font-medium text-orange-800 mb-3">Family Recipe: Dadi's Gatte ki Sabzi</h3>
+
+                            <div className="mt-8 border-2 border-dashed border-purple-300 p-6 rounded-lg bg-transparent">
+                                <h3 className="text-center font-medium text-purple-800 mb-3">Traditional Recipe: Davanagere Benne Dosa</h3>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div>
-                                        <h4 className="font-medium text-orange-700 mb-2">Ingredients:</h4>
-                                        <ul className="list-disc pl-5 text-gray-700 space-y-1">
-                                            <li>2 cups besan (gram flour)</li>
-                                            <li>1/2 cup yogurt</li>
-                                            <li>2 tbsp ghee</li>
-                                            <li>1 tsp carom seeds (ajwain)</li>
-                                            <li>Red chilli powder to taste</li>
-                                            <li>Turmeric, coriander, garam masala</li>
-                                            <li>Fresh coriander leaves</li>
+                                        <h4 className="font-medium text-blue-700 mb-2">Ingredients:</h4>
+                                        <ul className="list-disc pl-5 text-white space-y-1">
+                                            <li>3 cups dosa rice (soaked 4-6 hours)</li>
+                                            <li>1 cup urad dal (soaked 4-6 hours)</li>
+                                            <li>1/2 cup poha (flattened rice)</li>
+                                            <li>1 tsp fenugreek seeds</li>
+                                            <li>Salt to taste</li>
+                                            <li>Generous amount of ghee/butter</li>
+                                            <li>Oil for cooking</li>
+                                            <li>Water as needed</li>
                                         </ul>
                                     </div>
 
                                     <div>
-                                        <h4 className="font-medium text-orange-700 mb-2">Story:</h4>
-                                        <p className="text-gray-700 text-sm">
-                                            My grandmother would make this dish every Sunday. She taught me that the secret is to knead the dough with love and patience. "The ghee must be homemade," she would insist, "and the yogurt should be slightly sour." Now I make this dish for special family gatherings, continuing her legacy.
+                                        <h4 className="font-medium text-pink-700 mb-2">Story:</h4>
+                                        <p className="text-white text-sm">
+                                            Davanagere's famous benne dosa gets its name from the generous use of butter (benne in Kannada). This crispy, golden dosa originated in the cotton hub city and became legendary for its unique texture and rich flavor. The secret lies in the perfect batter consistency and the liberal use of ghee that creates those signature crispy edges while keeping the center soft.
                                         </p>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     )}
 
@@ -663,9 +767,9 @@ export default function AboutMe() {
 
                 {/* Footer with Indian-inspired geometric pattern */}
                 <div className="mt-12 text-center">
-                    <div className="h-4 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-t-lg"></div>
-                    <div className="py-4 text-orange-800">
-                        <p>Connect with me for chai and conversation</p>
+                    {/* <div className="h-4 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-t-lg"></div> */}
+                    <div className="text-xl md:text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+                        <p>Connect with me for chai 🍵 and conversation 💭</p>
                     </div>
                 </div>
             </div>
