@@ -6,7 +6,7 @@ const app = express();
 app.use(morgan('dev'))
 // Enable CORS for all origins (or specify the one you need)
 app.use(cors({
-  origin: 'https://harshith-kudapali-35xj.vercel.app/',
+  origin: 'https://harshith-kudapali-35xj.vercel.app',
   credentials: true // if using cookies
 }));
 
@@ -14,6 +14,9 @@ app.use(cors({
 app.use(express.json());
 app.use('/api/contact',contactRouter)
 // Your routes
+app.get("/", (req, res) => {
+  res.send("Hello, World!");
+});
 
 
 app.listen(3000, () => {
