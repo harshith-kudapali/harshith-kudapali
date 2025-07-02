@@ -1,6 +1,6 @@
 // src/components/GitHubCalendar.jsx
 import React, { useEffect, useState } from 'react';
-
+import { backendApi } from '../App';
 const GitHubCalendar = ({ username }) => {
   const [contributions, setContributions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +11,7 @@ const GitHubCalendar = ({ username }) => {
       try {
         // In a real implementation, this would be a call to your backend API
         // which would then fetch the GitHub contribution data
-        const response = await fetch(`/api/github/contributions/${username}`);
+        const response = await fetch(`${backendApi}/api/github/contributions/${username}`);
         
         if (!response.ok) {
           throw new Error('Failed to fetch GitHub contributions');
