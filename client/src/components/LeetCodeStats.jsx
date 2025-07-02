@@ -1,5 +1,6 @@
 // src/components/LeetCodeStats.jsx
 import React, { useState, useEffect } from 'react';
+import { backendApi } from '../App';
 
 const LeetCodeStats = ({ username }) => {
   const [stats, setStats] = useState(null);
@@ -10,14 +11,14 @@ const LeetCodeStats = ({ username }) => {
     const fetchLeetCodeStats = async () => {
       try {
         console.log('Fetching LeetCode stats for username:', username);
-        console.log('Making request to:', `/api/leetcode/stats/${username}`);
+        console.log('Making request to:', `${backendApi}/api/leetcode/stats/${username}`);
         
-        const response = await fetch(`/api/leetcode/stats/${username}`);
+        const response = await fetch(`${backendApi}/api/leetcode/stats/${username}`);
           console.log(response)
         console.log('Response status:', response.status);
         console.log('Response ok:', response.ok);
         console.log('Response content-type:', response.headers.get('content-type'));
-        
+        h
         // Get the raw response text first
         const responseText = await response.text();
         console.log('Raw response text:', responseText);
