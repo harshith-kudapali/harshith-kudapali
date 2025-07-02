@@ -13,7 +13,7 @@ const LeetCodeStats = ({ username }) => {
         console.log('Making request to:', `/api/leetcode/stats/${username}`);
         
         const response = await fetch(`/api/leetcode/stats/${username}`);
-        
+          console.log(response)
         console.log('Response status:', response.status);
         console.log('Response ok:', response.ok);
         console.log('Response content-type:', response.headers.get('content-type'));
