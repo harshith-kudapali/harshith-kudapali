@@ -18,7 +18,7 @@ const LeetCodeStats = ({ username }) => {
         console.log('Response status:', response.status);
         console.log('Response ok:', response.ok);
         console.log('Response content-type:', response.headers.get('content-type'));
-        h
+        
         // Get the raw response text first
         const responseText = await response.text();
         console.log('Raw response text:', responseText);
