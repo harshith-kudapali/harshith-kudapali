@@ -3,7 +3,7 @@ import morgan from "morgan"
 import cors from "cors"
 import { contactRouter } from "./routes/routes.contact.js"
 import { leetRouter } from "./routes/routes.leet.js"
-
+import { gitRouter } from "./routes/routes.github.js"
 
 
 
@@ -18,7 +18,7 @@ app.use(cors({
 // Other middlewares
 app.use(express.json());
 app.use('/api/contact',contactRouter)
-// app.use('/api/github/contributions/:userID',gitRouter)
+app.use('/api/github/',gitRouter)
 app.use('/api/leetcode/',leetRouter)
 // Your routes
 app.get("/", (req, res) => {
