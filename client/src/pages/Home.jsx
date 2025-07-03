@@ -3,8 +3,35 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import GitHubCalendar from '../components/GitHubCalendar';
 import LeetCodeStats from '../components/LeetCodeStats';
-
+import { 
+  Code, 
+  Server, 
+  Database, 
+  Zap, 
+  Palette, 
+  FileText, 
+  Hash, 
+  Code2,
+  GitBranch,
+  Container,
+  Workflow,
+  Cloud
+} from 'lucide-react';
 const Home = ({ addNotification }) => {
+  const technologies = [
+    { name: 'React', icon: Code, color: 'text-blue-400' },
+    { name: 'Node.js', icon: Server, color: 'text-green-400' },
+    { name: 'PostgreSQL', icon: Database, color: 'text-blue-600' },
+    { name: 'Express', icon: Zap, color: 'text-yellow-400' },
+    { name: 'TailwindCSS', icon: Palette, color: 'text-cyan-400' },
+    { name: 'JavaScript', icon: FileText, color: 'text-yellow-300' },
+    { name: 'TypeScript', icon: Hash, color: 'text-blue-500' },
+    { name: 'Python', icon: Code2, color: 'text-green-500' },
+    { name: 'Git', icon: GitBranch, color: 'text-orange-400' },
+    { name: 'Docker', icon: Container, color: 'text-blue-300' },
+    { name: 'CI/CD', icon: Workflow, color: 'text-purple-400' },
+    { name: 'AWS', icon: Cloud, color: 'text-orange-500' }
+  ];
   useEffect(() => {
     // Simulate connection established
     const timer = setTimeout(() => {
@@ -90,29 +117,81 @@ const Home = ({ addNotification }) => {
       </section>
       
       {/* Tech Stack */}
-      <section className="relative z-10">
+     <section className="relative z-10 max-w-6xl mx-auto">
         <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-white text-center lg:text-left">
           <span className="text-blue-400">&lt;</span> Tech Arsenal <span className="text-blue-400">/&gt;</span>
         </h2>
         
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-          {['React', 'Node.js', 'PostgreSQL', 'Express', 'TailwindCSS', 'JavaScript', 'TypeScript', 'Python', 'Git', 'Docker', 'CI/CD', 'AWS'].map((tech, index) => (
-            <div 
-              key={index}
-              className="flex flex-col items-center justify-center p-3 sm:p-4 lg:p-6 bg-gray-800 bg-opacity-50 rounded-lg border border-blue-500/20 hover:border-blue-500/50 transition-all transform hover:-translate-y-1 hover:shadow-md hover:shadow-blue-500/10 min-h-[80px] sm:min-h-[100px]"
-            >
-              <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center mb-2 sm:mb-3 text-lg sm:text-xl lg:text-2xl text-blue-400">
-                <div className="w-full h-full rounded-lg bg-blue-500/20 flex items-center justify-center">
-                  <span className="text-xs sm:text-sm lg:text-base font-bold">
-                    {tech.charAt(0)}
-                  </span>
+          {technologies.map((tech, index) => {
+            const IconComponent = tech.icon;
+            return (
+              <div 
+                key={index}
+                className="group flex flex-col items-center justify-center p-3 sm:p-4 lg:p-6 bg-gray-800 bg-opacity-50 rounded-lg border border-blue-500/20 hover:border-blue-500/50 transition-all duration-300 transform hover:-translate-y-2 hover:shadow-lg hover:shadow-blue-500/20 min-h-[80px] sm:min-h-[100px] cursor-pointer relative overflow-hidden"
+                style={{
+                  animationDelay: `${index * 100}ms`,
+                  animation: 'fadeInUp 0.6s ease-out forwards'
+                }}
+              >
+                {/* Animated background glow */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                {/* Floating particles effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute top-2 left-2 w-1 h-1 bg-blue-400 rounded-full animate-ping"></div>
+                  <div className="absolute top-4 right-3 w-1 h-1 bg-purple-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
+                  <div className="absolute bottom-3 left-4 w-1 h-1 bg-cyan-400 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
                 </div>
+                
+                {/* Icon container with rotation animation */}
+                <div className="relative z-10 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-full h-full rounded-lg bg-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/30 transition-colors duration-300 group-hover:rotate-3">
+                    <IconComponent 
+                      className={`w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 ${tech.color} group-hover:scale-110 transition-all duration-300`}
+                    />
+                  </div>
+                </div>
+                
+                {/* Tech name with typewriter effect simulation */}
+                <span className="relative z-10 text-gray-300 text-xs sm:text-sm font-mono text-center leading-tight group-hover:text-white transition-colors duration-300">
+                  {tech.name}
+                </span>
+                
+                {/* Sliding bottom border */}
+                <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 group-hover:w-full transition-all duration-500"></div>
               </div>
-              <span className="text-gray-300 text-xs sm:text-sm font-mono text-center leading-tight">{tech}</span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
+      
+      <style jsx>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-5px);
+          }
+        }
+        
+        .group:hover {
+          animation: float 2s ease-in-out infinite;
+        }
+      `}</style>
+    
     </div>
   );
 };
