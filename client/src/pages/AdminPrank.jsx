@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { AlertCircle, Terminal, MessageSquare, Mail, AlertTriangle, Download, ShieldAlert, Zap } from 'lucide-react';
-
+import axios from "axios"
+import { backendApi } from '../App';
+import AdminPannel from '../components/AdminPannel';
 // CSS animation styles
 const styles = `
   @keyframes float {
@@ -59,6 +61,27 @@ export default function PanicAdminPage() {
   const messagesEndRef = useRef(null);
   const terminalRef = useRef(null);
   const timeoutsRef = useRef([]);
+  const getPassword = async () => {
+    try {
+      const response = await axios.get(`${backendApi}/api/getotp`)
+      console.log(response);
+      console.log(response.status);
+      return response.data
+    }
+    catch {
+      console.error("error in getting password")
+    }
+  }
+  const [otp, setotp] = useState(0)
+  useEffect(() => {
+    const fetchOtp = async () => {
+      const data = await getPassword();
+      if (data && data.code) {
+        setotp(data.code.toString()); // Make sure it's a string to compare properly
+      }
+    };
+    fetchOtp();
+  }, []);
 
   // Boss messages sequence
   const bossMessages = [
@@ -90,7 +113,7 @@ export default function PanicAdminPage() {
     setPassword(newPassword);
 
     // Check if password is correct
-    if (newPassword === 'harshith@123') {
+    if (newPassword === otp.toString()) {
       setIsAuthenticated(true);
     }
   };
@@ -144,7 +167,7 @@ export default function PanicAdminPage() {
                 const element = document.createElement('a');
                 const file = new Blob(
                   ["GOTCHA! This was just a joke! \n\nI created this fake 'panic admin page' as a fun way to protect my admin dashboard. There's no actual virus or security breach - just a creative security measure to discourage unauthorized access. If you're seeing this, you probably tried to access my admin panel. Nice try! \n\nSincerely,\nHarshith"],
-                  {type: 'text/plain'}
+                  { type: 'text/plain' }
                 );
                 element.href = URL.createObjectURL(file);
                 element.download = 'CRITICAL_SECURITY_WARNING.txt';
@@ -174,55 +197,9 @@ export default function PanicAdminPage() {
   // If authenticated, show real admin page
   if (isAuthenticated) {
     return (
-      <div className="min-h-screen text-white p-8 font-mono">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8 text-blue-400">Admin Dashboard</h1>
-          <div className="bg-gray-700 rounded-lg p-6 shadow-lg">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl text-blue-400">Welcome, Administrator</h2>
-              <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm">Authenticated</span>
-            </div>
-            <p className="mb-4">You've successfully accessed the real admin panel.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-gray-800 p-4 rounded-lg">
-                <h3 className="text-lg mb-3 text-blue-400">Website Statistics</h3>
-                <div className="flex justify-between mb-2">
-                  <span>Total Visitors:</span>
-                  <span>12,453</span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <span>Bounce Rate:</span>
-                  <span>32.4%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Avg. Session:</span>
-                  <span>3m 24s</span>
-                </div>
-              </div>
-              <div className="bg-gray-800 p-4 rounded-lg">
-                <h3 className="text-lg mb-3 text-blue-400">System Status</h3>
-                <div className="flex justify-between mb-2">
-                  <span>Server:</span>
-                  <span className="text-green-400">Online</span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <span>Database:</span>
-                  <span className="text-green-400">Connected</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Storage:</span>
-                  <span>68% (34.2GB/50GB)</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex space-x-3">
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md shadow-blue-500/20 transition-all hover:bg-blue-600">Edit Content</button>
-              <button className="bg-gray-800 text-gray-300 px-4 py-2 rounded-md transition-all hover:bg-gray-700">Manage Users</button>
-              <button className="bg-gray-800 text-gray-300 px-4 py-2 rounded-md transition-all hover:bg-gray-700">View Logs</button>
-            </div>
-          </div>
-        </div>
-      </div>
+
+      <AdminPannel />
+
     );
   }
 
@@ -277,11 +254,10 @@ export default function PanicAdminPage() {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`max-w-xs p-2 rounded-lg shadow-md ${
-                msg.type === 'boss'
+              className={`max-w-xs p-2 rounded-lg shadow-md ${msg.type === 'boss'
                   ? 'bg-gray-700 self-start rounded-bl-none'
                   : 'bg-green-700 self-end rounded-br-none'
-              } ${index === messages.length - 1 ? 'animate-fadeIn' : ''}`}
+                } ${index === messages.length - 1 ? 'animate-fadeIn' : ''}`}
             >
               {msg.text}
               <div className="text-right text-xs text-gray-400 mt-1 flex justify-end items-center">
