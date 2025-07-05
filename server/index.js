@@ -20,8 +20,8 @@ app.use(cors({
 // Other middlewares
 app.use(express.json());
 app.use('/api/contact',contactRouter)
-// app.use('/api/github/',gitRouter)
-// app.use('/api/leetcode/',leetRouter)
+app.use('/api/github/',gitRouter)
+app.use('/api/leetcode/',leetRouter)
  app.use('/api/getotp',getotpRouter)
 app.use('/api/createProject',createProjectRouter)
 // Your routes
