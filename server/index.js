@@ -6,6 +6,7 @@ import { leetRouter } from "./routes/routes.leet.js"
 import { gitRouter } from "./routes/routes.github.js"
 import { getotpRouter } from "./routes/routes.getotp.js"
 import { createProjectRouter } from "./routes/routes.createProject.js"
+import { projectsRouter } from "./routes/routes.projects.js"
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -24,6 +25,7 @@ app.use('/api/github/',gitRouter)
 app.use('/api/leetcode/',leetRouter)
  app.use('/api/getotp',getotpRouter)
 app.use('/api/createProject',createProjectRouter)
+app.use('/api/projects',projectsRouter)
 // Your routes
 app.get("/", (req, res) => {
   res.send("Hello, World!");

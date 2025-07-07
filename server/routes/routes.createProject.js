@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 export const createProjectRouter = express.Router();
 
 // Project Schema
-const projectSchema = new mongoose.Schema({
+export const projectSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
@@ -45,7 +45,7 @@ const projectSchema = new mongoose.Schema({
 });
 
 // Create Project model
-const Project = mongoose.model('Project', projectSchema);
+export const Project = mongoose.model('Project', projectSchema);
 
 // POST /api/createProject
 createProjectRouter.post('/', async (req, res) => {

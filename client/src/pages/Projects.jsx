@@ -1,81 +1,54 @@
 // src/pages/Projects.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProjectCard from '../components/ProjectCard';
+import { backendApi } from '../App';
+import axios from 'axios';
 
 const Projects = ({ addNotification }) => {
   const [filter, setFilter] = useState('all');
+  const [projects, setProjects] = useState([]);
+  const [categories, setCategories] = useState([{ id: 'all', label: 'All Projects' }]);
+
+  useEffect(() => {
+    axios.get(`${backendApi}/api/projects`)
+      .then(res => {
+        setProjects(res.data);
+        
+        // Generate dynamic categories
+        const projectCategories = res.data || [];
+        const uniqueCategories = [];
+        
+        projectCategories.forEach(project => {
+          if (project && project.category && typeof project.category === 'string') {
+            if (!uniqueCategories.includes(project.category)) {
+              uniqueCategories.push(project.category);
+            }
+          }
+        });
+        
+        const dynamicCategories = uniqueCategories.map(category => ({
+          id: category,
+          label: formatCategoryLabel(category)
+        }));
+        
+        setCategories([{ id: 'all', label: 'All Projects' }, ...dynamicCategories]);
+      })
+      .catch(err => {
+        console.error('Failed to fetch projects', err);
+        // Keep default categories on error
+        setCategories([{ id: 'all', label: 'All Projects' }]);
+      });
+  }, []);
   
-  const projects = [
-    {
-      id: 1,
-      title: 'Portfolio Website',
-      description: 'A modern personal portfolio website built with React and TailwindCSS.',
-      tags: ['React', 'TailwindCSS', 'CI/CD'],
-      image: '/api/placeholder/800/600',
-      repo: 'https://github.com/username/portfolio',
-      link: 'https://portfolio.example.com',
-      category: 'web'
-    },
-    {
-      id: 2,
-      title: 'E-commerce Platform',
-      description: 'Full-stack e-commerce application with user authentication and payment integration.',
-      tags: ['React', 'Node.js', 'MongoDB', 'Express'],
-      image: '/api/placeholder/800/600',
-      repo: 'https://github.com/username/ecommerce',
-      link: 'https://ecommerce.example.com',
-      category: 'web'
-    },
-    {
-      id: 3,
-      title: 'Machine Learning Weather Prediction',
-      description: 'A machine learning model to predict weather patterns based on historical data.',
-      tags: ['Python', 'TensorFlow', 'Data Science'],
-      image: '/api/placeholder/800/600',
-      repo: 'https://github.com/username/weather-prediction',
-      category: 'ml'
-    },
-    {
-      id: 4,
-      title: 'Mobile Task Manager',
-      description: 'A cross-platform mobile app for task management with cloud synchronization.',
-      tags: ['React Native', 'Firebase', 'Redux'],
-      image: '/api/placeholder/800/600',
-      repo: 'https://github.com/username/task-manager',
-      link: 'https://taskmanager.example.com',
-      category: 'mobile'
-    },
-    {
-      id: 5,
-      title: 'Data Visualization Dashboard',
-      description: 'Interactive dashboard for visualizing complex datasets using D3.js.',
-      tags: ['JavaScript', 'D3.js', 'CSS'],
-      image: '/api/placeholder/800/600',
-      repo: 'https://github.com/username/data-dashboard',
-      category: 'web'
-    },
-    {
-      id: 6,
-      title: 'Blockchain Explorer',
-      description: 'A web application to explore and visualize blockchain transactions.',
-      tags: ['React', 'Web3.js', 'Ethereum'],
-      image: '/api/placeholder/800/600',
-      repo: 'https://github.com/username/blockchain-explorer',
-      category: 'blockchain'
-    }
-  ];
+  // Helper function to format category labels
+  const formatCategoryLabel = (category) => {
+    // Since categories are already properly formatted, return as-is
+    return category;
+  };
   
   const filteredProjects = filter === 'all' 
     ? projects 
-    : projects.filter(project => project.category === filter);
-  
-  const categories = [
-    { id: 'all', label: 'All Projects' },
-    { id: 'web', label: 'Web Development' },
-    { id: 'mobile', label: 'Mobile Apps' },
-    { id: 'ml', label: 'Machine Learning' },
-    { id: 'blockchain', label: 'Blockchain' }
-  ];
+    : projects.filter(project => project && project.category === filter);
   
   return (
     <div>
@@ -106,7 +79,16 @@ const Projects = ({ addNotification }) => {
       {/* Projects Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProjects.map(project => (
-          <ProjectCard key={project.id} {...project} />
+          <ProjectCard 
+            key={project._id} 
+            id={project._id}
+            title={project.title}
+            description={project.description}
+            tags={project.tags}
+            image={project.image}
+            link={project.link}
+            repo={project.repo}
+          />
         ))}
       </div>
     </div>
