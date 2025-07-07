@@ -41,9 +41,10 @@ const GitHubCalendar = ({ username }) => {
   
   if (loading) {
     return (
-      <div className="bg-gray-900 rounded-lg border border-gray-700 p-4">
+      <div className="min-h-96 text-center text-slate-300 p-4">
         <div className="flex justify-center items-center h-52">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
+      <div className="animate-spin h-12 w-12 mx-auto border-4 border-emerald-500/30 border-t-transparent rounded-full"></div>
+                <p className="mt-4">Loading github stats...</p>
         </div>
       </div>
     );
@@ -51,7 +52,7 @@ const GitHubCalendar = ({ username }) => {
   
   if (error && contributions.length === 0) {
     return (
-      <div className="bg-gray-900 rounded-lg border border-gray-700 p-6">
+      <div className="bg-red-900/20 border border-red-500/30 p-8 rounded-xl text-center text-slate-300 overflow-x-auto">
         <h3 className="text-lg text-red-400 mb-2">Error Loading GitHub Activity</h3>
         <p className="text-gray-400 text-sm">Could not load GitHub contributions. Please check the username or try again later.</p>
       </div>
@@ -63,6 +64,7 @@ const GitHubCalendar = ({ username }) => {
     const year = new Date(day.date).getFullYear();
     return year === selectedYear;
   });
+  
   
   // Calculate total contributions for the selected year
   const totalContributions = filteredContributions.reduce((sum, day) => sum + day.count, 0);
@@ -192,16 +194,13 @@ const GitHubCalendar = ({ username }) => {
   const monthLabels = getMonthLabels();
   
   return (
-    <div className="bg-gray-900 rounded-lg border border-gray-700 p-4 w-full">
+    <div className="bg-slate-900 border border-slate-700/50 p-8 rounded-xl text-center text-slate-300 overflow-x-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div className="flex items-center gap-4 flex-wrap">
           <h3 className="text-sm font-medium text-gray-200">
             {totalContributions} contributions in {selectedYear}
           </h3>
-          <button className="text-xs text-gray-400 hover:text-gray-200">
-            Contribution settings
-          </button>
         </div>
         <div className="flex gap-1">
           <button 
@@ -237,7 +236,7 @@ const GitHubCalendar = ({ username }) => {
                 <div
                   key={`${label.month}-${index}`}
                   className="absolute text-xs text-gray-400 whitespace-nowrap"
-                  style={{ left: `${label.position * 13}px` }}
+                  style={{ left: `${label.position * 17}px` }}
                 >
                   {label.month}
                 </div>
@@ -277,8 +276,13 @@ const GitHubCalendar = ({ username }) => {
           
           {/* Legend */}
           <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
-            <a href="#" className="hover:text-gray-200">Learn how we count contributions</a>
+            <a href="https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/why-are-my-contributions-not-showing-up-on-my-profile" className="hover:text-gray-200">Learn how we count contributions</a>
             <div className="flex items-center gap-1">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className='flex items-center  mt-3 text-xs text-gray-400'>
               <span>Less</span>
               <div className="flex gap-1 mx-2">
                 <div className="w-3 h-3 rounded-sm border border-gray-700" style={{ backgroundColor: '#161b22' }}></div>
@@ -288,9 +292,6 @@ const GitHubCalendar = ({ username }) => {
                 <div className="w-3 h-3 rounded-sm border border-gray-700" style={{ backgroundColor: '#39d353' }}></div>
               </div>
               <span>More</span>
-            </div>
-          </div>
-        </div>
       </div>
       
       {/* Contribution Activity Section */}
