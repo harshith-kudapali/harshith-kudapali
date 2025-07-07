@@ -82,7 +82,7 @@ if (loading) {
         </div>
         <Particles />
         <NotificationSystem notifications={notifications} />
-        <Footer />
+        <Footer addNotification={addNotification} />
       </div>
     </Router>
   );
