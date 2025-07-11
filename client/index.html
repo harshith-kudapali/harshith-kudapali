@@ -2,12 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/icon1.svg" id="dynamic-favicon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <title>Harshith_Kudapali</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Dynamic Favicon Animation Script -->
+    <script>
+      const icons = [
+        "/icon1.svg",
+        "/icon2.svg",
+        "/icon3.svg",
+        "/icon4.svg",
+        "/icon5.svg",
+        "/icon6.svg",
+        "/icon7.svg",
+        "/icon8.svg",
+        "/icon9.svg",
+        "/icon10.svg"
+      ];
+      let current = 0;
+
+      setInterval(() => {
+        const favicon = document.getElementById("dynamic-favicon");
+        if (favicon) {
+          favicon.href = icons[current % icons.length];
+          current++;
+        }
+      }, 1500); // Faster switching = smoother animation
+    </script>
   </body>
 </html>

@@ -1,0 +1,21 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff7675;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e84393;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="0" fill="url(#bgGradient6)"/>
+  <g transform="translate(16,16)">
+    <!-- Left lens -->
+    <circle cx="-7" cy="0" r="5.5" fill="white" stroke="#2d3436" stroke-width="1.5"/>
+    <!-- Right lens -->
+    <circle cx="7" cy="0" r="5.5" fill="white" stroke="#2d3436" stroke-width="1.5"/>
+    <!-- Bridge -->
+    <path d="M-1.5 -1 L1.5 -1 Q2 -1 2 -0.5 Q2 0 1.5 0 L-1.5 0 Q-2 0 -2 -0.5 Q-2 -1 -1.5 -1" fill="#2d3436"/>
+    <!-- Left arm -->
+    <path d="M-12.5 -2 L-12.5 2 Q-12.5 3 -11.5 3 L-10 3" stroke="#2d3436" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+    <!-- Right arm -->
+    <path d="M12.5 -2 L12.5 2 Q12.5 3 11.5 3 L10 3" stroke="#2d3436" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>
