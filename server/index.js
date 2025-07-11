@@ -10,6 +10,8 @@ import { projectsRouter } from "./routes/routes.projects.js"
 import skillrouter from "./routes/routes.skills.js"
 import edurouter from "./routes/routes.education.js"
 import certirouter from "./routes/routes.certifications.js"
+import resumeRoutes from './routes/resumeRoutes.js';
+
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -32,6 +34,7 @@ app.use('/api/projects',projectsRouter)
 app.use('/api/skills',skillrouter)
 app.use('/api/education',edurouter)
 app.use('/api/certifications',certirouter)
+app.use('/api/resumes', resumeRoutes);
 // Your routes
 app.get("/", (req, res) => {
   res.send("Hello, World!");

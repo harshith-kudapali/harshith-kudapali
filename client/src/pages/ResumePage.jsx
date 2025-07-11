@@ -5,54 +5,60 @@ import {
   Move, Eraser, Check, Undo, Redo, Save
 } from 'lucide-react';
 
-// Mock data for PDF files - you would replace this with your Google Drive API fetch
-const mockPdfs = [
-  { id: '1', name: 'Resume_2025.pdf', thumbnail: '/api/placeholder/120/160', url: '#' },
-  { id: '2', name: 'CV_Technical.pdf', thumbnail: '/api/placeholder/120/160', url: '#' },
-  { id: '3', name: 'Portfolio_Summary.pdf', thumbnail: '/api/placeholder/120/160', url: '#' },
-];
-
 export default function ResumePage() {
-  const [pdfs, setPdfs] = useState(mockPdfs);
+  const [pdfs, setPdfs] = useState([]);
   const [selectedPdf, setSelectedPdf] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [zoom, setZoom] = useState(100);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [error, setError] = useState('');
   
   // Annotation states
   const [isAnnotationMode, setIsAnnotationMode] = useState(false);
-  const [annotationTool, setAnnotationTool] = useState(null); // 'pen', 'highlighter', 'note', 'eraser'
-  const [penColor, setPenColor] = useState('#ff0000'); // Default red
-  const [penSize, setPenSize] = useState(2); // Default pen size
-  const [annotations, setAnnotations] = useState({}); // Store annotations by page
+  const [annotationTool, setAnnotationTool] = useState(null);
+  const [penColor, setPenColor] = useState('#ff0000');
+  const [penSize, setPenSize] = useState(2);
+  const [annotations, setAnnotations] = useState({});
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentPath, setCurrentPath] = useState([]);
-  const [annotationHistory, setAnnotationHistory] = useState([]); // For undo/redo
+  const [annotationHistory, setAnnotationHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   
   const canvasRef = useRef(null);
   const pdfContainerRef = useRef(null);
-  
-  // Fetch PDFs from Google Drive
-  useEffect(() => {
-    // In a real implementation, you would:
-    // 1. Use Google Drive API to fetch PDFs from a folder
-    // 2. Get thumbnails and metadata
-    // 3. Update the pdfs state with the fetched data
+
+  // Convert Google Drive view URL to embed URL
+  const convertToEmbedUrl = (viewUrl) => {
+    if (!viewUrl) return '';
     
-    // This is a placeholder for the actual API call
+    // Extract file ID from various Google Drive URL formats
+    const fileIdMatch = viewUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    if (fileIdMatch) {
+      const fileId = fileIdMatch[1];
+      return `https://drive.google.com/file/d/${fileId}/preview`;
+    }
+    
+    return viewUrl;
+  };
+
+  // Fetch PDFs from server
+  useEffect(() => {
     const fetchPdfsFromDrive = async () => {
       setIsLoading(true);
+      setError('');
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        // Keep using mock data for now
-        setPdfs(mockPdfs);
+        const response = await fetch('http://localhost:3000/api/resumes');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setPdfs(data);
       } catch (error) {
         console.error("Error fetching PDFs:", error);
+        setError('Failed to load resumes. Please check your connection and try again.');
       } finally {
         setIsLoading(false);
       }
@@ -61,32 +67,83 @@ export default function ResumePage() {
     fetchPdfsFromDrive();
   }, []);
 
-  // Initialize canvas when the PDF is loaded and annotation mode is active
-  useEffect(() => {
-    if (selectedPdf && isAnnotationMode && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const container = pdfContainerRef.current;
-      
-      if (container) {
-        canvas.width = container.offsetWidth;
-        canvas.height = container.offsetHeight;
+  // Save annotations to server
+  const saveAnnotations = async () => {
+    if (!selectedPdf) return;
+    
+    try {
+      const response = await fetch(`http://localhost:3000/api/resumes/${selectedPdf._id}/annotations`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ annotations }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      alert('Annotations saved successfully!');
+    } catch (error) {
+      console.error("Save failed", error);
+      alert('Failed to save annotations. Please try again.');
+    }
+  };
+
+  // Initialize canvas and load annotations when PDF is selected
+ useEffect(() => {
+  if (selectedPdf && isAnnotationMode && canvasRef.current) {
+    const canvas = canvasRef.current;
+    const container = pdfContainerRef.current;
+    
+    if (container) {
+      // Use setTimeout to ensure iframe is rendered
+      setTimeout(() => {
+        const rect = container.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        canvas.style.width = `${rect.width}px`;
+        canvas.style.height = `${rect.height}px`;
         
         // Load existing annotations for the current page
         drawSavedAnnotations();
-      }
+      }, 100);
     }
-  }, [selectedPdf, isAnnotationMode, currentPage, zoom]);
+  }
+}, [selectedPdf, isAnnotationMode, currentPage, zoom]);
 
   // Handle PDF selection
-  const openPdf = (pdf) => {
-    setIsLoading(true);
-    setSelectedPdf(pdf);
-    setCurrentPage(1);
-    setTotalPages(5); // Mock value - would come from actual PDF metadata
-    setTimeout(() => setIsLoading(false), 800); // Simulate loading time
-  };
+  const openPdf = async (pdf) => {
+  setIsLoading(true);
+  setSelectedPdf(pdf);
+  setCurrentPage(1);
+  setTotalPages(1);
+  
+  // Load annotations from server
+  try {
+    const response = await fetch(`http://localhost:3000/api/resumes/${pdf._id}/annotations`);
+    if (response.ok) {
+      const data = await response.json();
+      setAnnotations(data.annotations || {});
+    } else {
+      // Fallback to local annotations if server request fails
+      setAnnotations(pdf.annotations || {});
+    }
+  } catch (error) {
+    console.error("Failed to load annotations:", error);
+    setAnnotations(pdf.annotations || {});
+  }
+  
+  // Reset annotation history
+  setAnnotationHistory([]);
+  setHistoryIndex(-1);
+  
+  // Better loading state management
+  setTimeout(() => setIsLoading(false), 1500);
+};
 
-  // Handle page navigation
+  // Handle page navigation (for multi-page PDFs)
   const goToNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -112,7 +169,7 @@ export default function ResumePage() {
   const toggleAnnotationMode = () => {
     if (!isAnnotationMode) {
       setIsAnnotationMode(true);
-      setAnnotationTool('pen'); // Default to pen tool when entering annotation mode
+      setAnnotationTool('pen');
     } else {
       setIsAnnotationMode(false);
       setAnnotationTool(null);
@@ -144,8 +201,8 @@ export default function ResumePage() {
     ctx.lineWidth = penSize;
     
     if (annotationTool === 'highlighter') {
-      ctx.globalAlpha = 0.3; // Make highlighter semi-transparent
-      ctx.lineWidth = penSize * 3; // Make highlighter thicker
+      ctx.globalAlpha = 0.3;
+      ctx.lineWidth = penSize * 3;
     } else {
       ctx.globalAlpha = 1.0;
     }
@@ -159,10 +216,8 @@ export default function ResumePage() {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     
-    // Add to current path
     setCurrentPath(prev => [...prev, { x, y }]);
     
-    // Draw the line
     const ctx = canvas.getContext('2d');
     ctx.lineTo(x, y);
     ctx.stroke();
@@ -173,7 +228,6 @@ export default function ResumePage() {
     
     setIsDrawing(false);
     
-    // Save the path to annotations
     if (currentPath.length > 0) {
       const pageKey = `page-${currentPage}`;
       const updatedAnnotations = { ...annotations };
@@ -227,10 +281,8 @@ export default function ResumePage() {
     updatedAnnotations[pageKey].push([note]);
     setAnnotations(updatedAnnotations);
     
-    // Draw the note
     drawStickyNote(note);
     
-    // Save to history
     const newHistory = annotationHistory.slice(0, historyIndex + 1);
     newHistory.push({
       action: 'add',
@@ -246,15 +298,12 @@ export default function ResumePage() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
-    // Draw note background
-    ctx.fillStyle = 'rgba(255, 255, 0, 0.7)'; // Yellow sticky note
+    ctx.fillStyle = 'rgba(255, 255, 0, 0.7)';
     ctx.fillRect(note.x, note.y, 150, 100);
     
-    // Draw note text
     ctx.fillStyle = '#000';
     ctx.font = '14px Arial';
     
-    // Wrap text
     const words = note.text.split(' ');
     let line = '';
     let y = note.y + 20;
@@ -269,7 +318,7 @@ export default function ResumePage() {
         line = words[i] + ' ';
         y += 20;
         
-        if (y > note.y + 90) break; // Don't overflow the note
+        if (y > note.y + 90) break;
       } else {
         line = testLine;
       }
@@ -289,13 +338,11 @@ export default function ResumePage() {
     
     pageAnnotations.forEach(path => {
       if (path.length > 0) {
-        // Check if it's a sticky note
         if (path[0].tool === 'note') {
           drawStickyNote(path[0]);
           return;
         }
         
-        // It's a drawing path
         ctx.beginPath();
         ctx.moveTo(path[0].x, path[0].y);
         ctx.lineCap = 'round';
@@ -325,7 +372,6 @@ export default function ResumePage() {
       const updatedAnnotations = { ...annotations };
       
       if (action.action === 'add') {
-        // Remove the path
         updatedAnnotations[action.pageKey].splice(action.pathIndex, 1);
       }
       
@@ -341,7 +387,6 @@ export default function ResumePage() {
       const updatedAnnotations = { ...annotations };
       
       if (action.action === 'add') {
-        // Re-add the path
         if (!updatedAnnotations[action.pageKey]) {
           updatedAnnotations[action.pageKey] = [];
         }
@@ -355,7 +400,8 @@ export default function ResumePage() {
     }
   };
 
-  const handleEraser = (e) => {
+ const handleEraser = (e) => {
+    // Only proceed if we're using the eraser tool AND currently drawing
     if (annotationTool !== 'eraser' || !isDrawing) return;
     
     const canvas = canvasRef.current;
@@ -366,12 +412,10 @@ export default function ResumePage() {
     const pageKey = `page-${currentPage}`;
     const pageAnnotations = annotations[pageKey] || [];
     
-    // Find paths that intersect with the eraser
     const eraserSize = 20;
     let pathsToRemove = [];
     
     pageAnnotations.forEach((path, pathIndex) => {
-      // Skip sticky notes for now - would need a more complex hitbox
       if (path.length > 0 && path[0].tool === 'note') {
         const note = path[0];
         if (x >= note.x && x <= note.x + 150 && y >= note.y && y <= note.y + 100) {
@@ -380,7 +424,6 @@ export default function ResumePage() {
         return;
       }
       
-      // Check each segment of the path
       for (let i = 1; i < path.length; i++) {
         const dx = path[i].x - path[i-1].x;
         const dy = path[i].y - path[i-1].y;
@@ -388,7 +431,6 @@ export default function ResumePage() {
         
         if (len === 0) continue;
         
-        // Check if the eraser intersects this segment
         const closestT = ((x - path[i-1].x) * dx + (y - path[i-1].y) * dy) / (len * len);
         const clampedT = Math.max(0, Math.min(1, closestT));
         
@@ -404,7 +446,6 @@ export default function ResumePage() {
       }
     });
     
-    // Remove the paths (in reverse order to avoid index issues)
     if (pathsToRemove.length > 0) {
       const updatedAnnotations = { ...annotations };
       pathsToRemove.sort((a, b) => b - a);
@@ -416,22 +457,13 @@ export default function ResumePage() {
       setAnnotations(updatedAnnotations);
       drawSavedAnnotations();
     }
-  };
-
-  const saveAnnotations = () => {
-    // In a real app, you'd save to backend/database
-    alert('Annotations saved! (In a real app, this would save to a database)');
-    
-    // This is where you'd make an API call to save annotations
-    console.log('Saving annotations:', annotations);
-  };
-
+};
   return (
-    <div className="flex h-screen bg-transparent text-gray-100">
+    <div className="flex h-screen bg-gray-900 text-gray-100">
       <div className="w-full h-full flex overflow-hidden rounded-xl border border-cyan-500/30 shadow-lg shadow-cyan-500/20">
         {/* Sidebar */}
         {sidebarOpen && (
-          <div className="w-64 border-r border-cyan-800/50 p-4 overflow-y-auto">
+          <div className="w-64 border-r border-cyan-800/50 p-4 overflow-y-auto bg-gray-800/50">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-lg font-semibold text-cyan-300">My Resumes</h2>
               <button 
@@ -442,7 +474,13 @@ export default function ResumePage() {
               </button>
             </div>
             
-            {isLoading && !selectedPdf ? (
+            {error && (
+              <div className="mb-4 p-3 bg-red-900/30 border border-red-500/50 rounded-lg">
+                <p className="text-red-300 text-sm">{error}</p>
+              </div>
+            )}
+            
+            {isLoading && pdfs.length === 0 ? (
               <div className="flex justify-center items-center h-32">
                 <div className="animate-pulse text-cyan-400">Loading documents...</div>
               </div>
@@ -450,9 +488,9 @@ export default function ResumePage() {
               <ul className="space-y-4">
                 {pdfs.map((pdf) => (
                   <li 
-                    key={pdf.id}
+                    key={pdf._id}
                     className={`p-3 rounded-lg cursor-pointer transition-all duration-300 ${
-                      selectedPdf?.id === pdf.id 
+                      selectedPdf?._id === pdf._id 
                         ? "bg-cyan-900/30 border border-cyan-500/50 shadow-md shadow-cyan-500/20" 
                         : "hover:bg-gray-800/40 border border-transparent"
                     }`}
@@ -460,7 +498,14 @@ export default function ResumePage() {
                   >
                     <div className="flex items-center space-x-3">
                       <FileText size={20} className="text-cyan-400" />
-                      <span className={selectedPdf?.id === pdf.id ? "text-cyan-300 font-medium" : ""}>{pdf.name}</span>
+                      <div className="flex-1">
+                        <span className={`block ${selectedPdf?._id === pdf._id ? "text-cyan-300 font-medium" : ""}`}>
+                          {pdf.name}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {new Date(pdf.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
                     </div>
                   </li>
                 ))}
@@ -470,7 +515,7 @@ export default function ResumePage() {
         )}
 
         {/* PDF Viewer */}
-        <div className="flex-1 flex flex-col bg-black/30 backdrop-blur-md overflow-hidden">
+        <div className="flex-1 flex flex-col bg-gray-900/50 backdrop-blur-md overflow-hidden">
           {!sidebarOpen && (
             <button 
               onClick={() => setSidebarOpen(true)}
@@ -550,7 +595,8 @@ export default function ResumePage() {
                     
                     <a 
                       href={selectedPdf.url}
-                      download={selectedPdf.name}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="p-1 rounded-md hover:bg-gray-700/50 text-cyan-400"
                     >
                       <Download size={20} />
@@ -559,7 +605,7 @@ export default function ResumePage() {
                 </div>
               </div>
 
-              {/* Annotation Toolbar - Only visible when a PDF is selected */}
+              {/* Annotation Toolbar */}
               <div className="bg-black/60 backdrop-blur-md border-b border-cyan-800/50 p-2 flex items-center">
                 <div className="flex items-center space-x-2">
                   <button 
@@ -691,7 +737,7 @@ export default function ResumePage() {
               </div>
 
               {/* PDF Content */}
-              <div className="flex-1 overflow-auto p-4 flex justify-center bg-gradient-to-b from-gray-900/70 to-black/70 backdrop-blur-sm">
+              <div className="flex-1 overflow-auto p-4 flex justify-center bg-gradient-to-b from-gray-900/70 to-black/70">
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center h-full">
                     <div className="w-16 h-16 border-4 border-cyan-400 border-t-transparent rounded-full animate-spin mb-4"></div>
@@ -700,31 +746,27 @@ export default function ResumePage() {
                 ) : (
                   <div 
                     ref={pdfContainerRef}
-                    className="bg-white shadow-lg shadow-cyan-500/20 transition-all relative"
+                    className="relative bg-white shadow-lg shadow-cyan-500/20 transition-all"
                     style={{ 
                       width: `${zoom}%`, 
                       maxWidth: zoom > 100 ? 'none' : '800px',
-                      height: '1000px' // Simulated PDF height
+                      height: '1000px'
                     }}
                     onClick={annotationTool === 'note' ? addStickyNote : undefined}
                   >
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-800">
-                      <div className="text-center">
-                        <img 
-                          src="/api/placeholder/600/800" 
-                          alt="PDF Preview" 
-                          className="mx-auto border border-gray-300"
-                        />
-                        <p className="mt-4 text-lg">
-                          Page {currentPage} of {selectedPdf.name}
-                        </p>
-                        <p className="text-sm text-gray-600 mt-2">
-                          {isAnnotationMode ? 'Annotation mode enabled - try drawing on the page!' : 
-                           '(This is a placeholder - actual PDF content would be rendered here)'}
-                        </p>
-                      </div>
-                    </div>
+                    {/* Embedded PDF */}
+                    <iframe
+                      src={convertToEmbedUrl(selectedPdf.url)}
+                      className="w-full h-full border-0"
+                      title={selectedPdf.name}
+                      onLoad={() => setIsLoading(false)}
+                      onError={() => {
+                        setError('Failed to load PDF. Please try again.');
+                        setIsLoading(false);
+                      }}
+                    />
                     
+                  
                     {/* Canvas overlay for annotations */}
                     {isAnnotationMode && (
                       <canvas
