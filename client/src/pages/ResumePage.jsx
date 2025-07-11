@@ -4,6 +4,7 @@ import {
   Maximize, Minimize, Pen, Highlighter, StickyNote, 
   Move, Eraser, Check, Undo, Redo, Save
 } from 'lucide-react';
+import { backendApi } from '../App';
 
 export default function ResumePage() {
   const [pdfs, setPdfs] = useState([]);
@@ -50,7 +51,7 @@ export default function ResumePage() {
       setIsLoading(true);
       setError('');
       try {
-        const response = await fetch('http://localhost:3000/api/resumes');
+        const response = await fetch(`${backendApi}/api/resumes`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -72,7 +73,7 @@ export default function ResumePage() {
     if (!selectedPdf) return;
     
     try {
-      const response = await fetch(`http://localhost:3000/api/resumes/${selectedPdf._id}/annotations`, {
+      const response = await fetch(`${backendApi}/api/resumes/${selectedPdf._id}/annotations`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ export default function ResumePage() {
   
   // Load annotations from server
   try {
-    const response = await fetch(`http://localhost:3000/api/resumes/${pdf._id}/annotations`);
+    const response = await fetch(`${backendApi}/api/resumes/${pdf._id}/annotations`);
     if (response.ok) {
       const data = await response.json();
       setAnnotations(data.annotations || {});
