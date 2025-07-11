@@ -51,7 +51,7 @@ const Skills = ({ addNotification }) => {
       } catch (err) {
         console.error('Error fetching skills data:', err);
         setError('Failed to load skills data. Please try again later.');
-        
+
         // Show error notification
         if (addNotification) {
           addNotification('Failed to load skills data', 'error');
@@ -66,7 +66,7 @@ const Skills = ({ addNotification }) => {
           { id: 5, name: 'SQL', level: 85, color: 'green' },
           { id: 6, name: 'TypeScript', level: 70, color: 'blue' }
         ]);
-        
+
         setWebSkills([
           { id: 1, name: 'React', level: 85, color: 'blue' },
           { id: 2, name: 'Node.js', level: 80, color: 'green' },
@@ -75,7 +75,7 @@ const Skills = ({ addNotification }) => {
           { id: 5, name: 'TailwindCSS', level: 90, color: 'blue' },
           { id: 6, name: 'PostgreSQL', level: 70, color: 'purple' }
         ]);
-        
+
         setOtherSkills([
           { id: 1, name: 'Git & Version Control', level: 85, color: 'red' },
           { id: 2, name: 'Docker', level: 65, color: 'blue' },
@@ -150,8 +150,8 @@ const Skills = ({ addNotification }) => {
         <div className="text-center">
           <div className="text-red-500 text-xl mb-4">⚠️ Error</div>
           <p className="text-gray-400 mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Retry
@@ -166,14 +166,14 @@ const Skills = ({ addNotification }) => {
       <h1 className="text-3xl font-bold mb-8 text-white">
         <span className="text-blue-400">&lt;</span> Skills & Expertise <span className="text-blue-400">/&gt;</span>
       </h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {/* Programming Languages */}
         <div className="bg-gray-800 bg-opacity-50 rounded-lg p-6 border border-blue-500/30">
           <h3 className="text-xl font-mono mb-6 text-blue-400">Programming Languages</h3>
-          
+
           {programmingSkills.map((skill, index) => (
-            <SkillBar 
+            <SkillBar
               key={skill.id || index}
               skill={skill.name}
               percentage={skill.level}
@@ -181,13 +181,13 @@ const Skills = ({ addNotification }) => {
             />
           ))}
         </div>
-        
+
         {/* Web Development */}
         <div className="bg-gray-800 bg-opacity-50 rounded-lg p-6 border border-blue-500/30">
           <h3 className="text-xl font-mono mb-6 text-blue-400">Web Development</h3>
-          
+
           {webSkills.map((skill, index) => (
-            <SkillBar 
+            <SkillBar
               key={skill.id || index}
               skill={skill.name}
               percentage={skill.level}
@@ -195,13 +195,13 @@ const Skills = ({ addNotification }) => {
             />
           ))}
         </div>
-        
+
         {/* Other Skills */}
         <div className="bg-gray-800 bg-opacity-50 rounded-lg p-6 border border-blue-500/30">
           <h3 className="text-xl font-mono mb-6 text-blue-400">Other Skills</h3>
-          
+
           {otherSkills.map((skill, index) => (
-            <SkillBar 
+            <SkillBar
               key={skill.id || index}
               skill={skill.name}
               percentage={skill.level}
@@ -210,20 +210,23 @@ const Skills = ({ addNotification }) => {
           ))}
         </div>
       </div>
-      
+
       {/* Education & Certifications */}
       <div className="mt-12">
         <h2 className="text-2xl font-bold mb-6 text-white">
           <span className="text-blue-400">&lt;</span> Education & Certifications <span className="text-blue-400">/&gt;</span>
         </h2>
-        
+
         <div className="space-y-6">
           {/* Timeline */}
           <div className="relative border-l-2 border-blue-500/50 pl-8 ml-4 space-y-10">
             {/* Render education and certifications here */}
             {[...education, ...certifications].map((item, index) => (
               <div key={item.id || index} className="relative">
-                <div className="absolute -left-11 h-6 w-6 rounded-full border-2 border-blue-500 bg-gray-900"></div>
+                <div
+                  className="absolute -left-11 h-6 w-6 rounded-full border-2 border-blue-500"
+                  style={{ backgroundColor: item.color || '#3B82F6' }} // default to Tailwind blue-500
+                ></div>
                 <div className="mb-2">
                   <h3 className="text-lg font-semibold text-white">{item.title}</h3>
                   <p className="text-blue-400">{item.institution}</p>
@@ -233,6 +236,7 @@ const Skills = ({ addNotification }) => {
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </div>
