@@ -460,7 +460,9 @@ export default function ResumePage() {
     }
   };
   return (
-    <div className="flex h-screen bg-gray-900 text-gray-100">
+    <section className="relative z-10">
+
+      <div className="flex bg-gray-900 text-gray-100">
         <div className="w-full h-full flex overflow-hidden rounded-xl border border-cyan-500/30 shadow-lg shadow-cyan-500/20">
           {/* Sidebar */}
           {sidebarOpen && (
@@ -491,8 +493,8 @@ export default function ResumePage() {
                     <li
                       key={pdf._id}
                       className={`p-3 rounded-lg cursor-pointer transition-all duration-300 ${selectedPdf?._id === pdf._id
-                          ? "bg-cyan-900/30 border border-cyan-500/50 shadow-md shadow-cyan-500/20"
-                          : "hover:bg-gray-800/40 border border-transparent"
+                        ? "bg-cyan-900/30 border border-cyan-500/50 shadow-md shadow-cyan-500/20"
+                        : "hover:bg-gray-800/40 border border-transparent"
                         }`}
                       onClick={() => openPdf(pdf)}
                     >
@@ -728,6 +730,7 @@ export default function ResumePage() {
                 </div>
 
                 {/* PDF Content */}
+
                 <div className="flex-1 overflow-auto p-4 flex justify-center bg-gradient-to-b from-gray-900/70 to-black/70">
                   {isLoading ? (
                     <div className="flex flex-col items-center justify-center h-full">
@@ -775,6 +778,7 @@ export default function ResumePage() {
                     </div>
                   )}
                 </div>
+
               </>
             ) : (
               <div className="flex-1 flex items-center justify-center bg-gradient-to-b from-gray-900/50 to-black/70 backdrop-blur-sm">
@@ -790,4 +794,6 @@ export default function ResumePage() {
           </div>
         </div>
       </div>
-  )}
+    </section>
+  )
+}
