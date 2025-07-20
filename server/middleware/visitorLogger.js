@@ -1,20 +1,17 @@
 import maxmind from 'maxmind';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import Visitor from '../models/Visitor.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const dbPath = path.join(__dirname, '..', 'database', 'GeoLite2-City.mmdb');
+// The path needs to be resolved from the current working directory in Vercel
+const dbPath = path.join(process.cwd(), 'server', 'database', 'GeoLite2-City.mmdb');
 
 let lookup;
 try {
   lookup = await maxmind.open(dbPath);
   console.log('MaxMind GeoIP database loaded successfully.');
 } catch (error) {
-  console.error('FATAL: Could not load MaxMind DB. Visitor logging is disabled.', error);
+  console.error('FATAL: Could not load MaxMind DB.', error);
 }
-
 export const logVisitor = (req, res, next) => {
   if (!lookup) {
     return next();
@@ -26,7 +23,7 @@ export const logVisitor = (req, res, next) => {
   if (ip === '::1' || ip === '127.0.0.1') {
     return next();
   }
-  
+
   try {
     const geoData = lookup.get(ip);
 
