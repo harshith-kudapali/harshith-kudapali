@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import axios from "axios";
+import { backendApi } from '../App';
 
 const AddResumeModal = ({ isOpen, onClose, onAdd }) => {
   const [formData, setFormData] = useState({ name: "", link: "" });
@@ -29,7 +30,7 @@ function extractDriveFileId(url) {
   const thumbnail = `https://drive.google.com/thumbnail?id=${fileId}`;
 
   try {
-    const res = await axios.post("http://localhost:3000/api/resumes", {
+    const res = await axios.post(`${backendApi}/api/resumes`, {
       name: formData.name,
       url: formData.link,
       thumbnail,

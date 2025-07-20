@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { backendApi } from '../App';
 
 // Simple dark mode styles
 const styles = {
@@ -169,7 +170,7 @@ const BlogCreator = ({ onClose = () => {}, onBlogCreated = () => {} }) => {
         categories: data.categories.split(",").map(c => c.trim()).filter(Boolean),
         tags: data.tags.split(",").map(t => t.trim()).filter(Boolean),
       };
-      const response = await axios.post(`http://localhost:3000${endpoint}`, payload);
+      const response = await axios.post(`${backendApi+endpoint}`, payload);
 
       onBlogCreated(response.data);
       alert(`Blog post created successfully!`);

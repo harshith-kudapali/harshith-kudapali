@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, CheckCircle } from 'lucide-react';
 import axios from 'axios';
+import { backendApi } from '../App';
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState('');
@@ -12,7 +13,7 @@ export default function NewsletterSignup() {
     setIsLoading(true);
 
     try {
-      await axios.post('http://localhost:3000/api/newsletter/subscribe', { email });
+      await axios.post(`${backendApi}/api/newsletter/subscribe`, { email });
       setIsSubscribed(true);
       setEmail('');
       setTimeout(() => setIsSubscribed(false), 3000);

@@ -22,27 +22,27 @@ const app = express();
 app.use(morgan('dev'))
 // Enable CORS for all origins (or specify the one you need)
 app.use(cors({
-  // origin: 'https://harshithkudapali.vercel.app',
+  origin: 'https://harshithkudapali.vercel.app',
   credentials: true // if using cookies
 }));
 
 // Other middlewares
 app.use(express.json());
-// app.use('/api/contact',contactRouter)
-// app.use('/api/github/',gitRouter)
-// app.use('/api/leetcode/',leetRouter)
+app.use('/api/contact',contactRouter)
+app.use('/api/github/',gitRouter)
+app.use('/api/leetcode/',leetRouter)
  app.use('/api/getotp',getotpRouter)
-// app.use('/api/createProject',createProjectRouter)
-// app.use('/api/projects',projectsRouter)
-// app.use('/api/skills',skillrouter)
-// app.use('/api/education',edurouter)
-// app.use('/api/certifications',certirouter)
-// app.use('/api/resumes', resumeRoutes);
+app.use('/api/createProject',createProjectRouter)
+app.use('/api/projects',projectsRouter)
+app.use('/api/skills',skillrouter)
+app.use('/api/education',edurouter)
+app.use('/api/certifications',certirouter)
+app.use('/api/resumes', resumeRoutes);
 // // Your routes
-// app.get("/", (req, res) => {
-//   res.send("Hello, World!");
-// });
-// app.use('/api', blogRoutes);
+app.get("/", (req, res) => {
+  res.send("Hello, World!");
+});
+app.use('/api', blogRoutes);
 app.use(logVisitor);
 app.use('/api', visitorRoutes);
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Calendar, Clock, Heart, MessageSquare, Bookmark, Share2, User, ExternalLink, AlertTriangle } from 'lucide-react';
 import axios from 'axios';
+import { backendApi } from '../App';
 
 export default function SinglePostView({ post, setSelectedPost, blogPosts, setSelectedTag }) {
     const [isBookmarked, setIsBookmarked] = useState(false);
@@ -25,7 +26,7 @@ export default function SinglePostView({ post, setSelectedPost, blogPosts, setSe
             setLikeCount(newLikeCount);
             
             // Make API call to persist the like
-            const response = await axios.post(`http://localhost:3000/api/blog-posts/${post._id}/like`, {
+            const response = await axios.post(`${backendApi}/api/blog-posts/${post._id}/like`, {
                 liked: newIsLiked
             });
             
@@ -46,7 +47,7 @@ export default function SinglePostView({ post, setSelectedPost, blogPosts, setSe
     const handleAddComment = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`http://localhost:3000/api/blog-posts/${post._id}/comments`, {
+            await axios.post(`${backendApi}/api/blog-posts/${post._id}/comments`, {
                 text: commentText,
                 author: commentNameOfUser
             });
@@ -71,7 +72,7 @@ export default function SinglePostView({ post, setSelectedPost, blogPosts, setSe
             setLoading(true);
             try {
                 // Check if post has a source URL or try to find original content
-                const response = await axios.get(`http://localhost:3000/api/blog-posts/${post._id}/source`);
+                const response = await axios.get(`${backendApi}:3000/api/blog-posts/${post._id}/source`);
                 setOriginalSource(response.data.originalSource);
             } catch (error) {
                 console.error('Error fetching original source:', error);

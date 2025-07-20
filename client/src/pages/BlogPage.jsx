@@ -7,6 +7,7 @@ import Sidebar from '../components/Sidebar';
 import BlogContent from '../components/BlogContent';
 import BlogCreator from '../components/BlogCreator';
 import LoadingSpinner from '../components/LoadingSpinner';
+import { backendApi } from '../App';
 
 export default function BlogPage() {
   const [darkMode, setDarkMode] = useState(false);
@@ -27,7 +28,7 @@ export default function BlogPage() {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:3000/api/blog-posts');
+        const response = await axios.get(`${backendApi}/api/blog-posts`);
         setBLOG_POSTS(response.data);
       } catch (error) {
         console.error('Error fetching posts:', error);

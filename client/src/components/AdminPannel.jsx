@@ -74,7 +74,7 @@ export default function AdminPannel() {
       try {
         const { start, end } = dateRange;
         // The URL assumes your Vite proxy is set up, or the backend runs on the same origin.
-        const response = await fetch(`http://localhost:3000/api/visitors?startDate=${start}&endDate=${end}`);
+        const response = await fetch(`${backendApi}/api/visitors?startDate=${start}&endDate=${end}`);
         const data = await response.json();
         setVisitors(data);
       } catch (error) {
