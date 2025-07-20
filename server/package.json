@@ -11,10 +11,13 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "@mozilla/readability": "^0.6.0",
     "axios": "^1.10.0",
+    "cheerio": "^1.1.0",
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
     "express": "^5.1.0",
+    "jsdom": "^26.1.0",
     "mongoose": "^8.16.1",
     "morgan": "^1.10.0",
     "nodemailer": "^7.0.4",

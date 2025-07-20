@@ -3,10 +3,12 @@ import NewProject from './NewProject';
 import SkillFormPopup from './SkillFormPopup';
 import { backendApi } from '../App';
 import AddResumeModal from './AddResumeModal';
+import BlogCreator from './BlogCreator';
 export default function AdminPannel() {
   const [formType, setFormType] = useState(null); // Start with null instead of 'Skill'
   const [notifications, setNotifications] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [show, setShow] = useState(false);
 
   const API_BASE_URL = `${backendApi}/api`
 
@@ -103,6 +105,16 @@ export default function AdminPannel() {
         onClose={() => setIsFormOpen(false)}
         onAdd={(newResume) => setPdfs((prev) => [newResume, ...prev])}
       />
+       <div>
+      <button onClick={() => setShow(true)}>Open Blog Creator</button>
+      {show && (
+        <BlogCreator
+          onClose={() => setShow(false)}
+          onBlogCreated={(blog) =>
+            alert("Blog created! " + JSON.stringify(blog))}
+        />
+      )}
+    </div>
 
     </div>
   );

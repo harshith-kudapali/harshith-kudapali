@@ -11,7 +11,7 @@ import skillrouter from "./routes/routes.skills.js"
 import edurouter from "./routes/routes.education.js"
 import certirouter from "./routes/routes.certifications.js"
 import resumeRoutes from './routes/resumeRoutes.js';
-
+import blogRoutes from './routes/blogRoutes.js';
 import dotenv from 'dotenv'
 dotenv.config()
 
@@ -19,7 +19,7 @@ const app = express();
 app.use(morgan('dev'))
 // Enable CORS for all origins (or specify the one you need)
 app.use(cors({
-  origin: 'https://harshithkudapali.vercel.app',
+  // origin: 'https://harshithkudapali.vercel.app',
   credentials: true // if using cookies
 }));
 
@@ -39,6 +39,7 @@ app.use('/api/resumes', resumeRoutes);
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
+app.use('/api', blogRoutes);
 
 
 app.listen(3000, () => {
