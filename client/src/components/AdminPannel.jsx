@@ -1,9 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import NewProject from './NewProject';
 import SkillFormPopup from './SkillFormPopup';
 import { backendApi } from '../App';
 import AddResumeModal from './AddResumeModal';
 import BlogCreator from './BlogCreator';
+
+
+
+
+
+
+
+import VisitorTable from './VisitorTable';
+import VisitorMap from './VisitorMap';
+import VisitorChart from './VisitorChart';
+
+
+
 export default function AdminPannel() {
   const [formType, setFormType] = useState(null); // Start with null instead of 'Skill'
   const [notifications, setNotifications] = useState([]);
@@ -40,6 +53,42 @@ export default function AdminPannel() {
     addNotification(`${type} added successfully!`, 'success');
   };
 
+
+
+
+
+
+  const [visitors, setVisitors] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const today = tomorrow.toISOString().split('T')[0];
+  const thirtyDaysAgo = new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0];
+
+  const [dateRange, setDateRange] = useState({ start: thirtyDaysAgo, end: today });
+
+  useEffect(() => {
+    const fetchVisitors = async () => {
+      setLoading(true);
+      try {
+        const { start, end } = dateRange;
+        // The URL assumes your Vite proxy is set up, or the backend runs on the same origin.
+        const response = await fetch(`http://localhost:3000/api/visitors?startDate=${start}&endDate=${end}`);
+        const data = await response.json();
+        setVisitors(data);
+      } catch (error) {
+        console.error("Failed to fetch visitor data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchVisitors();
+  }, [dateRange]);
+
+  const handleDateChange = (e) => {
+    setDateRange({ ...dateRange, [e.target.name]: e.target.value });
+  };
   return (
     <div className="admin-panel min-h-screen bg-gray-900 text-white p-6">
       <NewProject />
@@ -105,17 +154,68 @@ export default function AdminPannel() {
         onClose={() => setIsFormOpen(false)}
         onAdd={(newResume) => setPdfs((prev) => [newResume, ...prev])}
       />
-       <div>
-      <button onClick={() => setShow(true)}>Open Blog Creator</button>
-      {show && (
-        <BlogCreator
-          onClose={() => setShow(false)}
-          onBlogCreated={(blog) =>
-            alert("Blog created! " + JSON.stringify(blog))}
-        />
-      )}
-    </div>
+      <div>
+        <button onClick={() => setShow(true)}>Open Blog Creator</button>
+        {show && (
+          <BlogCreator
+            onClose={() => setShow(false)}
+            onBlogCreated={(blog) =>
+              alert("Blog created! " + JSON.stringify(blog))}
+          />
+        )}
+      </div>
+
+
+
+
+
+
+      <div className="relative z-10 p-4 md:p-8 bg-gray-900 min-h-screen font-sans text-white">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold text-white mb-6">Visitor Analytics Dashboard</h1>
+
+          {/* Date Range Selector */}
+          <div className="bg-gray-800 p-4 rounded-lg shadow-sm mb-8 flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <label htmlFor="start" className="font-medium text-gray-300">From:</label>
+              <input type="date" name="start" id="start" value={dateRange.start} onChange={handleDateChange} className="p-2 border border-gray-600 rounded-md bg-gray-700 text-white" />
+            </div>
+            <div className="flex items-center gap-2">
+              <label htmlFor="end" className="font-medium text-gray-300">To:</label>
+              <input type="date" name="end" id="end" value={dateRange.end} onChange={handleDateChange} className="p-2 border border-gray-600 rounded-md bg-gray-700 text-white" />
+            </div>
+          </div>
+
+          {loading ? <p className="text-center text-gray-400">Loading data...</p> : (
+            <div className="space-y-8">
+              <div>
+                <h2 className="text-2xl font-semibold text-white mb-4">Visitor Map</h2>
+                <div className="bg-gray-800 p-2 rounded-lg shadow-md h-96">
+                  <VisitorMap visitors={visitors} />
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-semibold text-white mb-4">Visits Over Time</h2>
+                <div className="bg-gray-800 p-4 rounded-lg shadow-md h-80">
+                  <VisitorChart visitors={visitors} />
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-2xl font-semibold text-white mb-4">Recent Visitors</h2>
+                <div className="bg-gray-800 rounded-lg text-white shadow-md overflow-hidden">
+                  <VisitorTable visitors={visitors} />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+
 
     </div>
+
   );
 }

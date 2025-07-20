@@ -15,6 +15,9 @@ import blogRoutes from './routes/blogRoutes.js';
 import dotenv from 'dotenv'
 dotenv.config()
 
+import { logVisitor } from './middleware/visitorLogger.js';
+import visitorRoutes from './routes/visitorRoutes.js';
+
 const app = express();
 app.use(morgan('dev'))
 // Enable CORS for all origins (or specify the one you need)
@@ -25,22 +28,23 @@ app.use(cors({
 
 // Other middlewares
 app.use(express.json());
-app.use('/api/contact',contactRouter)
-app.use('/api/github/',gitRouter)
-app.use('/api/leetcode/',leetRouter)
+// app.use('/api/contact',contactRouter)
+// app.use('/api/github/',gitRouter)
+// app.use('/api/leetcode/',leetRouter)
  app.use('/api/getotp',getotpRouter)
-app.use('/api/createProject',createProjectRouter)
-app.use('/api/projects',projectsRouter)
-app.use('/api/skills',skillrouter)
-app.use('/api/education',edurouter)
-app.use('/api/certifications',certirouter)
-app.use('/api/resumes', resumeRoutes);
-// Your routes
-app.get("/", (req, res) => {
-  res.send("Hello, World!");
-});
-app.use('/api', blogRoutes);
-
+// app.use('/api/createProject',createProjectRouter)
+// app.use('/api/projects',projectsRouter)
+// app.use('/api/skills',skillrouter)
+// app.use('/api/education',edurouter)
+// app.use('/api/certifications',certirouter)
+// app.use('/api/resumes', resumeRoutes);
+// // Your routes
+// app.get("/", (req, res) => {
+//   res.send("Hello, World!");
+// });
+// app.use('/api', blogRoutes);
+app.use(logVisitor);
+app.use('/api', visitorRoutes);
 
 app.listen(3000, () => {
   console.log('Backend running on http://localhost:3000');

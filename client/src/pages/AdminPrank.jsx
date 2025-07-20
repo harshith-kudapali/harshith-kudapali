@@ -51,6 +51,7 @@ const styles = `
 export default function PanicAdminPage() {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [showPasswordInput, setShowPasswordInput] = useState(false);
   const [panicLevel, setPanicLevel] = useState(0);
   const [messages, setMessages] = useState([]);
