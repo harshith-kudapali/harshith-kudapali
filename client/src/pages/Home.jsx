@@ -43,72 +43,102 @@ const Home = ({ addNotification }) => {
     return () => clearTimeout(timer);
   }, []);
 
-useEffect(() => {
-  // This function fetches detailed geolocation data from the ipapi.co service.
-  async function getDetailedGeolocation() {
-    // Note: ipapi.co does not use a 'fields' parameter for its free JSON endpoint.
-    // It returns all available data by default.
-    const apiUrl = `https://ipapi.co/json/`;
+  useEffect(() => {
+    // --- HIGH ACCURACY METHOD: BROWSER GEOLOCATION API ---
+    const getBrowserGeolocation = () => {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error('Geolocation is not supported by your browser.'));
+        } else {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              // You can use the coordinates to get city/region info from a reverse geocoding API
+              // For now, let's just use the coordinates
+              resolve({
+                source: 'browser',
+                coordinates: {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                },
+                accuracy: position.coords.accuracy, // Accuracy in meters!
+              });
+            },
+            () => {
+              // User denied permission or another error occurred
+              reject(new Error('Unable to retrieve your location. Permission may have been denied.'));
+            }
+          );
+        }
+      });
+    };
 
-    try {
-      const response = await fetch(apiUrl);
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
+    // --- FALLBACK METHOD: IP-BASED GEOLOCATION (your existing code) ---
+    const getIpGeolocation = async () => {
+      const apiUrl = 'https://ipapi.co/json/';
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('Network response failed.');
+        const data = await response.json();
+        if (data.error) throw new Error(data.reason);
+
+        return {
+          source: 'ip-api',
+          ip: data.ip,
+          location: {
+            city: data.city,
+            region: data.region,
+            country: data.country_name,
+            postalCode: data.postal,
+          },
+          coordinates: {
+            latitude: data.latitude,
+            longitude: data.longitude,
+          },
+          network: {
+            isp: data.isp,
+            organization: data.org,
+          },
+        };
+      } catch (error) {
+        console.error('Failed to fetch IP geolocation:', error.message);
+        throw error;
+      }
+    };
+
+    // --- ORCHESTRATION LOGIC ---
+    const fetchAndSendGeolocation = async () => {
+      let geoData;
+      try {
+        // 1. First, try the high-accuracy browser API
+        geoData = await getBrowserGeolocation();
+        console.log('Successfully fetched high-accuracy location from browser:', geoData);
+      } catch (browserError) {
+        console.warn(browserError.message);
+        console.log('Falling back to IP-based geolocation...');
+        try {
+          // 2. If it fails, fall back to the IP API
+          geoData = await getIpGeolocation();
+          console.log('Successfully fetched fallback location from IP API:', geoData);
+        } catch (ipError) {
+          console.error('Both browser and IP geolocation failed:', ipError.message);
+          return; // Stop if both fail
+        }
       }
 
-      const data = await response.json();
-      if (data.error) {
-        throw new Error(`API returned an error: ${data.reason}`);
+      // Now send whichever data we managed to get to the backend
+      if (geoData) {
+        try {
+          const result = await axios.post(`${backendApi}/api/save-geolocation`, geoData);
+          console.log('Data successfully sent to backend:', result.data);
+        } catch (postError) {
+          console.error('Failed to send geolocation data to backend:', postError.message);
+        }
       }
+    };
 
-      // Organize the data into a more useful, nested format,
-      // mapping the new field names from ipapi.co.
-      const geolocationData = {
-        ip: data.ip,
-        location: {
-          city: data.city,
-          region: data.region,
-          country: data.country_name, // Field name changed from 'country'
-          postalCode: data.postal,     // Field name changed from 'zip'
-        },
-        coordinates: {
-          latitude: data.latitude,   // Field name changed from 'lat'
-          longitude: data.longitude,  // Field name changed from 'lon'
-        },
-        network: {
-          isp: data.isp,
-          organization: data.org,
-        },
-      };
+    fetchAndSendGeolocation();
 
-      return geolocationData;
-    } catch (error) {
-      console.error('Failed to fetch detailed geolocation:', error.message);
-      throw error; // Re-throw the error to be caught by the caller
-    }
-  }
-
-  // This orchestration function remains the same.
-  async function fetchAndSendGeolocation() {
-    try {
-      const data = await getDetailedGeolocation();
-      console.log('Successfully fetched geolocation data:');
-
-      // Use axios to send the data to your backend.
-      // IMPORTANT: Replace '/api/save-geolocation' with your actual backend endpoint.
-      const result = await axios.post(`${backendApi}/api/save-geolocation`, data);
-
-      console.log('Data successfully sent to backend:', result.data);
-    } catch (error) {
-      // This will catch errors from both the fetch and the axios post request.
-      console.error('Failed to send geolocation data to backend:', error.message);
-    }
-  }
-
-  // Execute the function.
-  fetchAndSendGeolocation();
-
-}, []);
+  }, []);
 
 
   return (
