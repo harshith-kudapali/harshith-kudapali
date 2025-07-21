@@ -138,7 +138,7 @@ useEffect(() => {
       }
       
       if (finalPayload) {
-        console.log('Sending this data to backend:', finalPayload);
+        console.log('Sending data to backend:');
         const result = await axios.post(`${backendApi}/api/save-geolocation`, finalPayload);
         console.log('Data successfully sent to backend:', result.data);
       }
