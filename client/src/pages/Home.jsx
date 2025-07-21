@@ -44,95 +44,102 @@ const Home = ({ addNotification }) => {
   }, []);
 
   useEffect(() => {
-    // --- HIGH ACCURACY METHOD: BROWSER GEOLOCATION API ---
-    const getBrowserGeolocation = () => {
+    // Helper function to get IP and network data (needed in both scenarios)
+    const getIpAndNetworkData = async () => {
+      const response = await fetch('https://ipapi.co/json/');
+      if (!response.ok) throw new Error('IP API network response was not ok.');
+      const data = await response.json();
+      if (data.error) throw new Error(data.reason);
+      return data;
+    };
+
+    // Helper function to convert coordinates to a location using a free reverse geocoding API
+    const getReverseGeocodedData = async (lat, lon) => {
+      const apiUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+      const response = await fetch(apiUrl);
+      if (!response.ok) throw new Error('Reverse geocoding failed.');
+      const data = await response.json();
+      return data.address; // The address object contains city, state, country, etc.
+    };
+
+    // Helper function to wrap the callback-based Browser Geolocation API in a Promise
+    const getBrowserCoordinates = () => {
       return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
-          reject(new Error('Geolocation is not supported by your browser.'));
-        } else {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              // You can use the coordinates to get city/region info from a reverse geocoding API
-              // For now, let's just use the coordinates
-              resolve({
-                source: 'browser',
-                coordinates: {
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude,
-                },
-                accuracy: position.coords.accuracy, // Accuracy in meters!
-              });
-            },
-            () => {
-              // User denied permission or another error occurred
-              reject(new Error('Unable to retrieve your location. Permission may have been denied.'));
-            }
-          );
+          return reject(new Error('Geolocation is not supported by this browser.'));
         }
+        navigator.geolocation.getCurrentPosition(resolve, reject);
       });
     };
 
-    // --- FALLBACK METHOD: IP-BASED GEOLOCATION (your existing code) ---
-    const getIpGeolocation = async () => {
-      const apiUrl = 'https://ipapi.co/json/';
-      try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) throw new Error('Network response failed.');
-        const data = await response.json();
-        if (data.error) throw new Error(data.reason);
-
-        return {
-          source: 'ip-api',
-          ip: data.ip,
-          location: {
-            city: data.city,
-            region: data.region,
-            country: data.country_name,
-            postalCode: data.postal,
-          },
-          coordinates: {
-            latitude: data.latitude,
-            longitude: data.longitude,
-          },
-          network: {
-            isp: data.isp,
-            organization: data.org,
-          },
-        };
-      } catch (error) {
-        console.error('Failed to fetch IP geolocation:', error.message);
-        throw error;
-      }
-    };
-
-    // --- ORCHESTRATION LOGIC ---
+    // --- Main Orchestration Logic ---
     const fetchAndSendGeolocation = async () => {
-      let geoData;
-      try {
-        // 1. First, try the high-accuracy browser API
-        geoData = await getBrowserGeolocation();
-        console.log('Successfully fetched high-accuracy location from browser:', geoData);
-      } catch (browserError) {
-        console.warn(browserError.message);
-        console.log('Falling back to IP-based geolocation...');
-        try {
-          // 2. If it fails, fall back to the IP API
-          geoData = await getIpGeolocation();
-          console.log('Successfully fetched fallback location from IP API:', geoData);
-        } catch (ipError) {
-          console.error('Both browser and IP geolocation failed:', ipError.message);
-          return; // Stop if both fail
-        }
-      }
+      let finalPayload;
 
-      // Now send whichever data we managed to get to the backend
-      if (geoData) {
+      try {
+        // Get IP and network data first, as it's always useful
+        const ipData = await getIpAndNetworkData();
+
         try {
-          const result = await axios.post(`${backendApi}/api/save-geolocation`, geoData);
-          console.log('Data successfully sent to backend:', result.data);
-        } catch (postError) {
-          console.error('Failed to send geolocation data to backend:', postError.message);
+          // --- HIGH ACCURACY PATH ---
+          console.log("Attempting to get high-accuracy location from browser...");
+          const position = await getBrowserCoordinates();
+          const accurateCoords = position.coords;
+          const address = await getReverseGeocodedData(accurateCoords.latitude, accurateCoords.longitude);
+
+          console.log("Success! Using high-accuracy browser location.");
+
+          finalPayload = {
+            ip: ipData.ip,
+            location: {
+              city: address.city || address.town || address.village || ipData.city, // Fallback to IP city
+              region: address.state || ipData.region, // Fallback to IP region
+              country: address.country || ipData.country_name,
+              postalCode: address.postcode || ipData.postal,
+            },
+            coordinates: {
+              latitude: accurateCoords.latitude,
+              longitude: accurateCoords.longitude,
+            },
+            network: {
+              isp: ipData.isp,
+              organization: ipData.org,
+            },
+          };
+
+        } catch (browserError) {
+          // --- FALLBACK PATH ---
+          console.warn(`High-accuracy location failed: ${browserError.message}`);
+          console.log("Falling back to less-accurate IP-based location.");
+
+          finalPayload = {
+            ip: ipData.ip,
+            location: {
+              city: ipData.city,
+              region: ipData.region,
+              country: ipData.country_name,
+              postalCode: ipData.postal,
+            },
+            coordinates: {
+              latitude: ipData.latitude,
+              longitude: ipData.longitude,
+            },
+            network: {
+              isp: ipData.isp,
+              organization: ipData.org,
+            },
+          };
         }
+
+        // Send the final, correctly-formatted payload to the backend
+        if (finalPayload) {
+          console.log('Sending this data to backend:', finalPayload);
+          const result = await axios.post(`${backendApi}/api/save-geolocation`, finalPayload);
+          console.log('Data successfully sent to backend:', result.data);
+        }
+
+      } catch (error) {
+        console.error('A critical error occurred during geolocation fetching:', error.message);
       }
     };
 
