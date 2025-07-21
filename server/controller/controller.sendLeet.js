@@ -1,6 +1,17 @@
 import axios from "axios";
 
 export const sendLeet = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://harshithkudapali.vercel.app');
+
+  // You might also need to set other CORS headers
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight requests for methods other than GET/POST
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   const { username } = req.params;
   if (!username || typeof username !== "string" || username.trim() === "") {
     return res.status(400).json({ error: "Valid username is required" });
