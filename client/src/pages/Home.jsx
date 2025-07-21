@@ -17,6 +17,8 @@ import {
   Workflow,
   Cloud
 } from 'lucide-react';
+import { backendApi } from '../App';
+import axios from 'axios'
 const Home = ({ addNotification }) => {
   const technologies = [
     { name: 'React', icon: Code, color: 'text-blue-400' },
@@ -40,6 +42,71 @@ const Home = ({ addNotification }) => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    // This function fetches detailed geolocation data from the ip-api.com service.
+    async function getDetailedGeolocation() {
+      const fields = 'query,status,message,country,regionName,city,zip,lat,lon,isp,org';
+      const apiUrl = `http://ip-api.com/json/?fields=${fields}`;
+
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (data.status !== 'success') {
+          throw new Error(`API returned an error: ${data.message}`);
+        }
+
+        // Organize the data into a more useful, nested format.
+        const geolocationData = {
+          ip: data.query,
+          location: {
+            city: data.city,
+            region: data.regionName,
+            country: data.country,
+            postalCode: data.zip,
+          },
+          coordinates: {
+            latitude: data.lat,
+            longitude: data.lon,
+          },
+          network: {
+            isp: data.isp,
+            organization: data.org,
+          },
+        };
+
+        return geolocationData;
+      } catch (error) {
+        console.error('Failed to fetch detailed geolocation:', error.message);
+        throw error; // Re-throw the error to be caught by the caller
+      }
+    }
+
+    // An async function to orchestrate fetching and sending the data.
+    async function fetchAndSendGeolocation() {
+      try {
+        const data = await getDetailedGeolocation();
+        console.log('Successfully fetched geolocation data:');
+
+        // Use axios to send the data to your backend.
+        // IMPORTANT: Replace '/api/save-geolocation' with your actual backend endpoint.
+        const result = await axios.post(`${backendApi}/api/save-geolocation`, data);
+
+        console.log('Data successfully sent to backend:', result.data);
+      } catch (error) {
+        // This will catch errors from both the fetch and the axios post request.
+        console.error('Failed to send geolocation data to backend:', error.message);
+      }
+    }
+
+    // Execute the function.
+    fetchAndSendGeolocation();
+
+  }, []); 
 
   return (
     <div className="space-y-8 sm:space-y-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">

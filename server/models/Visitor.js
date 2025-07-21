@@ -13,7 +13,13 @@ const visitorSchema = new mongoose.Schema({
     coordinates: {
       type: [Number], // [longitude, latitude]
       required: true
-    }
+    },
+  },
+  network: {
+    type: [String],
+  },
+  postalCode: {
+    type: Number,
   },
   visitDate: { type: Date, default: Date.now }
 });

@@ -38,12 +38,14 @@ app.use('/api/skills',skillrouter)
 app.use('/api/education',edurouter)
 app.use('/api/certifications',certirouter)
 app.use('/api/resumes', resumeRoutes);
-// // Your routes
+app.use('/api', blogRoutes);
+// // // Your routes
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
-app.use('/api', blogRoutes);
-app.use(logVisitor);
+
+
+app.use('/api/save-geolocation',logVisitor);
 app.use('/api', visitorRoutes);
 
 app.listen(3000, () => {

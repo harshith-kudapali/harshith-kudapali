@@ -13,9 +13,5 @@
   ],
   "routes": [
     { "src": "/(.*)", "dest": "/" }
-  ],
-  "functions": {
-    "server/server.js": {
-      "includeFiles": "server/database/GeoLite2-City.mmdb"
-    }}
+  ]
 }

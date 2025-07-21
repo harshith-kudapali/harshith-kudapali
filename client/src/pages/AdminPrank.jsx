@@ -256,8 +256,8 @@ export default function PanicAdminPage() {
             <div
               key={index}
               className={`max-w-xs p-2 rounded-lg shadow-md ${msg.type === 'boss'
-                  ? 'bg-gray-700 self-start rounded-bl-none'
-                  : 'bg-green-700 self-end rounded-br-none'
+                ? 'bg-gray-700 self-start rounded-bl-none'
+                : 'bg-green-700 self-end rounded-br-none'
                 } ${index === messages.length - 1 ? 'animate-fadeIn' : ''}`}
             >
               {msg.text}
