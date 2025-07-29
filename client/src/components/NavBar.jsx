@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
+import DevelopmentTicker from './DevelopmentTicker';
 const Navbar = ({ addNotification }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -19,6 +19,7 @@ const Navbar = ({ addNotification }) => {
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-gray-900 bg-opacity-90 backdrop-blur-md z-40 border-b border-blue-500 shadow-lg shadow-blue-500/20">
+            <DevelopmentTicker />
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <Link 
